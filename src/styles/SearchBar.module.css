@@ -1,0 +1,31 @@
+.screen{
+    background-color: #ecebeb;
+    border: 1.8px solid;
+    border-color: #000000;
+    height: 58px;
+    position: relative;
+    width: 795px;
+}
+
+.screen .text-wrapper{
+    color: #a2a2a2;
+    font-family: "Inter-Regular", Helvetica;
+    font-size: 30px;
+    font-weight: 400;
+    height: 30px;
+    left: 16px;
+    letter-spacing: -1, 50px;
+    line-height: 90.5px;
+    position: absolute;
+    top: 12px;
+    white-space: nowrap;
+    width: 484px;
+}
+
+.screen .image{
+    height: 44px;
+    left: 742px;
+    position: absolute;
+    top: 7px;
+    width: 41px;
+}

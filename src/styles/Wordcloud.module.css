@@ -1,0 +1,21 @@
+.screen {
+    height: 379px;
+    width: 389px;
+}
+
+.screen .group{
+    background-color: #fffcfc;
+    border: 2.72px solid;
+    border-color: #000000;
+    height: 379px;
+    position: relative;
+}
+
+.sceen .image{
+    height: 283px;
+    left: 4px;
+    object-fit: cover;
+    position: absolute;
+    top: 54px;
+    width: 377px;
+}

@@ -1,0 +1,13 @@
+.login {
+  height: 33px;
+  width: 171px;
+  position: relative;
+}
+
+.login .text-wrapper {
+  color: #2D6D44;
+  font-size: 27.2px;
+  font-weight: 600;
+  position: absolute;
+  text-align: center;
+}

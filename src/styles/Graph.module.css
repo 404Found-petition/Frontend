@@ -1,0 +1,139 @@
+.screen{
+    height: 432px;
+    width: 387px;
+}
+
+.screen .element{
+    height: 432px;
+    position: relative;
+    width: 397px;
+}
+
+.screen .overlap-group{
+    height: 399px;
+    left: -10px;
+    position: absolute;
+    top: -1px;
+    width: 398px;
+}
+
+.screen .arrow{
+    height: 388px;
+    left: 0px;
+    position: absolute;
+    top: 0px;
+    width: 20px;
+}
+
+.screen .div{
+    background-color: #f2b856;
+    border: 0.91px solid;
+    border-color: #000000;
+    border-radius: 1.81px;
+    height: 328px;
+    left: 106px;
+    position: absolute;
+    top: 61px;
+    width: 38px;
+}
+
+.screen .retangle-2{
+    background-color: #70b7ff;
+    border: 0.91px solid;
+    border-color: #000000;
+    border-radius: 1.81px;
+    height: 225px;
+    left: 299px;
+    position: absolute;
+    top: 163px;
+    width: 38px;
+}
+
+.screen .retangle-3{
+    background-color: #ff5a4e;
+    border: 0.91px solid;
+    border-color: #000000;
+    border-radius: 1.81px;
+    height: 263px;
+    left: 234px;
+    position: absolute;
+    top: 125px;
+    width: 38px;
+}
+
+.screen .retangle-4{
+    background-color: #fff12b;
+    border: 0.91px solid;
+    border-color: #000000;
+    border-radius: 1.81px;
+    height: 363px;
+    left: 39px;
+    position: absolute;
+    top: 25px;
+    width: 38px;
+}
+
+.screen .text-wrapper {
+    color: #000000;
+    font-family: "Inter-Bold", Helvetica;
+    font-size: 13px;
+    font-weight: 700;
+    left: 36px;
+    letter-spacing: 0;
+    line-height: normal;
+    position: absolute;
+    top: 401px;
+    width: 37px;
+}
+
+.screen .text-wrapper-2 {
+    color: #000000;
+    font-family: "Inter-Bold", Helvetica;
+    font-size: 13px;
+    font-weight: 700;
+    left: 282px;
+    letter-spacing: 0;
+    line-height: normal;
+    position: absolute;
+    top: 401px;
+    width: 57px;
+}
+
+.screen .text-wrapper-3 {
+    color: #000000;
+    font-family: "Inter-Bold", Helvetica;
+    font-size: 13px;
+    font-weight: 700;
+    left: 153px;
+    letter-spacing: 0;
+    line-height: normal;
+    position: absolute;
+    top: 401px;
+    width: 57px;
+}
+
+.screen .text-wrapper-4 {
+    color: #000000;
+    font-family: "Inter-Bold", Helvetica;
+    font-size: 13px;
+    font-weight: 700;
+    left: 89px;
+    letter-spacing: 0;
+    line-height: normal;
+    position: absolute;
+    top: 401px;
+    width: 57px;
+}
+
+.screen .text-wrapper-5 {
+    color: #000000;
+    font-family: "Inter-Bold", Helvetica;
+    font-size: 13px;
+    font-weight: 700;
+    left: 217px;
+    letter-spacing: 0;
+    line-height: normal;
+    position: absolute;
+    top: 401px;
+    width: 57px;
+}
