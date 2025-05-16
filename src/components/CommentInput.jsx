@@ -26,4 +26,4 @@ const CommentInput = ({ value, onChange, onSubmit }) => {
 
 export default CommentInput;
 
-//5.13 22:26 이름 수정정
+//5.13 22:26 이름 수정

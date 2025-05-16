@@ -5,10 +5,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import VoteBox from "./VoteBox";
-import group18 from "../assets/group-18.png";
-import group19 from "../assets/group-19.png";
-import line5 from "./line-5.svg";
-import line6 from "./line-6.svg";
 
 const PostForm = ({ showVote, setShowVote }) => {
   const navigate = useNavigate();
@@ -23,7 +19,6 @@ const PostForm = ({ showVote, setShowVote }) => {
     }
 
     try {
-      // 실제 백엔드 연동 시 axios.post(...) 사용
       console.log("제출됨", { title, content, has_vote: showVote });
       navigate("/posts");
     } catch (err) {
@@ -61,30 +56,33 @@ const PostForm = ({ showVote, setShowVote }) => {
 
         {showVote && <VoteBox />}
 
-        <div className="flex justify-end gap-2 mt-4">
-          <button onClick={handleCancel}>
-            <img src={group19} alt="Cancel" className="cursor-pointer" />
+        <div className="flex justify-end gap-4 mt-6">
+          <button
+            onClick={handleCancel}
+            className="w-[108px] h-[37px] bg-gray-300 text-black font-semibold rounded-md border border-black hover:bg-gray-400 transition"
+          >
+            Cancel
           </button>
-          <button onClick={handleSubmit}>
-            <img src={group18} alt="Submit" className="cursor-pointer" />
+          <button
+            onClick={handleSubmit}
+            className="w-[108px] h-[37px] bg-[#5cab7c] text-white font-semibold rounded-md border border-black hover:bg-[#489766] transition"
+          >
+            Submit
           </button>
         </div>
 
         {/* 안내 문구 */}
         {showAlert && (
           <div className="absolute w-[315px] h-40 top-10 left-1/2 transform -translate-x-1/2 z-50">
-            <div className="relative w-[315px] h-40 rounded-[5.67px] bg-[#f6fff4] border border-black">
-              <div className="absolute w-[274px] top-[67px] left-5 font-semibold text-black text-[21.9px] text-center">
-                게시글의 제목과<br />내용을 모두 입력하세요
+            <div className="relative w-full h-full rounded-[6px] bg-[#f6fff4] border border-black">
+              <div className="absolute top-3 right-3 text-[20px] font-bold text-gray-600 cursor-pointer" onClick={() => setShowAlert(false)}>
+                ×
               </div>
-              <div className="absolute w-28 top-[26px] left-[102px] font-semibold text-[#f20707] text-[21.9px] text-center">
+              <div className="absolute top-[26px] w-full text-center font-semibold text-[#f20707] text-[21.9px]">
                 WRONG
               </div>
-              <div className="absolute top-3 right-3 w-4 h-4 cursor-pointer" onClick={() => setShowAlert(false)}>
-                <div className="relative w-[18px] h-[17px]">
-                  <img className="absolute w-[17px] h-[17px]" src={line5} alt="line5" />
-                  <img className="absolute w-[17px] h-[17px]" src={line6} alt="line6" />
-                </div>
+              <div className="absolute top-[67px] w-full text-center font-semibold text-black text-[21.9px]">
+                게시글의 제목과<br />내용을 모두 입력하세요
               </div>
             </div>
           </div>
@@ -97,3 +95,4 @@ const PostForm = ({ showVote, setShowVote }) => {
 export default PostForm;
 
 // 5.12 23:06  3가지 문제 수정(1.제목/내용 데이터 관리 안 됨 2.게시글 작성 내용 백으로 안 넘어감 3.제목or내용 비어있을시 제출 안되도록 해야함)
+// 5.15 1:17  SUBMIT, CANCEL 버튼 이미지로 되어 있던거 수정, 안내문구 X자도 이미지로 되어있던거 수정

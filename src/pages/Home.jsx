@@ -1,14 +1,15 @@
-// Home.jsx
+// src/pages/Home.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "./style.css";
-import { SearchBar } from "./SearchBar";
-import SeatChartStatus from "./SeatChartStatus";
-import Seat from "./Seat";
+import "../styles/global.css";
+
+import { SearchBar } from "../components/SearchBar";
+import SeatChartStatus from "../components/SeatChartStatus";
+import Seat from "../components/Seat";
+import Graph from "../components/Graph";
+import Wordcloud from "../components/Wordcloud";
 import HomePostCard from "../components/HomePostCard";
 import { PetitionCard } from "../components/PetitionCard";
-import Graph from "./Graph";
-import Wordcloud from "./Wordcloud";
 
 const samplePosts = [
   { username: "User_ID", date: "2025.03.31", preview: "청원 명이나 게시글 제목 어쩌고저쩌고" },
@@ -28,16 +29,18 @@ const samplePetitions = [
   { title: "보건복지부", summary: "의료 관련 법률 개정을 제안합니다.", probability: 75 },
 ];
 
-export const Screen = () => {
+const Screen = () => {
   const navigate = useNavigate();
   const [prediction, setPrediction] = useState(null);
   const [showIntro, setShowIntro] = useState(true);
   const [fadeOut, setFadeOut] = useState(false);
 
+  // 반원 높이 상수 (SeatChartStatus 컴포넌트 높이 기준)
+  const SEAT_CHART_HEIGHT = 209;
+
   useEffect(() => {
     const timer1 = setTimeout(() => setFadeOut(true), 4500);
     const timer2 = setTimeout(() => setShowIntro(false), 5000);
-
     return () => {
       clearTimeout(timer1);
       clearTimeout(timer2);
@@ -74,20 +77,23 @@ export const Screen = () => {
             <SearchBar onSearchResult={handleSearchResult} />
           </div>
 
+          {/* 반원 (SeatChartStatus) - 상단 고정 */}
           {prediction && (
-            <SeatChartStatus percentage={Math.round(prediction.probability * 100)} />
+            <div style={{ height: SEAT_CHART_HEIGHT, position: "relative" }}>
+              <SeatChartStatus percentage={Math.round(prediction.probability * 100)} />
+            </div>
           )}
 
-          <Seat />
-
-          {/* ✅ 상단: 그래프 + 워드클라우드 + 청원동의현황 (세로로 긴 형태 포함) */}
-          <div className="mt-12 flex flex-row justify-center gap-8 items-start">
-            {/* 왼쪽 열: 그래프 + 워드클라우드 + 게시글 */}
+          {/* 그래프, 워드클라우드, POST 박스, 청원 동의 현황 박스를 한 그룹으로 묶고 반원 높이만큼 아래로 내려서 공간 확보 */}
+          <div className="mt-12 flex flex-row justify-center gap-8 items-start" style={{ marginTop: prediction ? SEAT_CHART_HEIGHT : 0 }}>
             <div className="flex flex-col gap-10">
+              {/* 그래프 */}
               <Graph />
+
+              {/* 워드클라우드 */}
               <Wordcloud />
 
-              {/* 게시글 카드 리스트 */}
+              {/* 게시글 박스 */}
               <div className="w-[820px] rounded-[33px] border border-[#a1a1a1] px-10 py-6 relative">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-[35px] font-bold text-[#6b6b6b] tracking-widest">POST</h2>
@@ -106,7 +112,7 @@ export const Screen = () => {
               </div>
             </div>
 
-            {/* 오른쪽 열: 청원 동의 현황 카드 리스트 */}
+            {/* 청원 동의 현황 박스 */}
             <div className="w-[350px] rounded-[33px] border border-[#a1a1a1] px-6 py-6 relative">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-[22px] font-bold text-[#6b6b6b] tracking-widest">청원 동의 현황</h2>
@@ -132,9 +138,3 @@ export const Screen = () => {
 };
 
 export default Screen;
-
-
-//첫 화면에 이제 분리해 놓은 애들을 불러다가 만들어야함
-// 5.12 21:36 퍼센트 나타내고 반원 채워지는거 불러오도록 추가
-// 21:41 export default Screen; 추가 누락 오류 해결
-// 5.15 12:25 그래프 워드클라우드 청원동의현황 게시판 자리 배치 맞춰서 추가

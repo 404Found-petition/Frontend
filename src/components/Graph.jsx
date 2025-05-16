@@ -1,5 +1,3 @@
-// 메인 화면에 5개 항목으로 된 그래프 나타나도록, 마우스 오버 효과시 ExpandedBarGraph.jsx 호출
-
 import React, { useState, useEffect } from "react";
 import { ExpandedBarGraph } from "./ExpandedBarGraph";
 
@@ -11,30 +9,30 @@ const CATEGORY_COLORS = {
   "경제·산업": "#F2B856",
   "교육": "#FFF12B",
   "환경": "#42D583",
-  "교통·건설": "#F9A3D4",
-  "보건·의료": "#FF5A4E",
-  "문화·예술": "#CBA0FF",
-  "과학·기술": "#33E4FF",
-  "국방·외교": "#538F2D",
   "기타": "#AAAAAA"
 };
 
-export const Graph = () => {
+const Graph = () => {
   const [hovered, setHovered] = useState(false);
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    fetch("/api/petition-status")
-      .then(res => res.json())
-      .then(responseData => {
-        const processed = responseData.map(item => ({
-          category: item.category,
-          value: item.count,
-          color: CATEGORY_COLORS[item.category] || "#ccc"
-        }));
-        setData(processed);
-      })
-      .catch(err => console.error("그래프 데이터 불러오기 실패:", err));
+    // ✅ 백 연결 전이라 mock 데이터 삽입
+    const mockData = [
+      { category: "정치·행정", count: 40 },
+      { category: "사회", count: 32 },
+      { category: "경제·산업", count: 25 },
+      { category: "교육", count: 20 },
+      { category: "환경", count: 15 },
+    ];
+
+    const processed = mockData.map(item => ({
+      category: item.category,
+      value: item.count,
+      color: CATEGORY_COLORS[item.category] || "#ccc"
+    }));
+
+    setData(processed);
   }, []);
 
   const sortedData = [...data].sort((a, b) => b.value - a.value);
@@ -43,12 +41,10 @@ export const Graph = () => {
 
   return (
     <>
-      {/* 작은 그래프 */}
       <div
         className="w-[871px] h-[250px] relative bg-[#fffcfc] border border-black rounded-[6px] z-10"
         onMouseEnter={() => setHovered(true)}
       >
-        {/* 기준선 */}
         <div className="absolute w-[659px] h-[3px] bg-black top-[210px] left-[105px]" />
 
         {sortedData.slice(0, 5).map((item, idx) => {
@@ -68,7 +64,6 @@ export const Graph = () => {
           );
         })}
 
-        {/* 라벨 */}
         {sortedData.slice(0, 5).map((item, idx) => (
           <div
             key={`label-${item.category}`}
@@ -84,7 +79,6 @@ export const Graph = () => {
         ))}
       </div>
 
-      {/* 확대 그래프 컴포넌트 */}
       {hovered && (
         <ExpandedBarGraph data={sortedData} onClose={() => setHovered(false)} />
       )}
@@ -92,3 +86,4 @@ export const Graph = () => {
   );
 };
 
+export default Graph;

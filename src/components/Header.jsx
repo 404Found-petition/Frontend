@@ -1,35 +1,40 @@
 // Header.jsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import "../styles/global.css"; // ⬅️ bg-lawgic-logo 클래스 포함되어 있어야 함
 
 const Header = ({ centeredLogo = false }) => {
   const navigate = useNavigate();
   const isLoggedIn = !!localStorage.getItem("access");
 
-  const handleLogout = () => {
-    localStorage.removeItem("access");
-    window.location.reload(); // 상태 즉시 반영
+  const handleLogout = async () => {
+    try {
+      const refreshToken = localStorage.getItem("refresh");
+      await axios.post("/api/logout/", { refresh: refreshToken });
+
+      localStorage.removeItem("access");
+      localStorage.removeItem("refresh");
+
+      navigate("/");
+    } catch (err) {
+      console.error("로그아웃 실패", err);
+    }
   };
 
   return (
     <div className="w-full h-[100px] bg-[#f5f5f5] flex items-center px-14 border-b border-gray-300 relative">
       {/* 로고 위치: 가운데 or 왼쪽 */}
       {centeredLogo ? (
-        <div className="absolute left-1/2 transform -translate-x-1/2">
-          <h1
-            className="text-[40px] font-extrabold text-[#1c6b41] tracking-wide cursor-pointer"
-            onClick={() => navigate("/")}
-          >
-            LAWGIC
-          </h1>
-        </div>
-      ) : (
-        <h1
-          className="text-2xl font-bold text-[#1c6b41] cursor-pointer"
+        <div
+          className="absolute left-1/2 transform -translate-x-1/2 w-[200px] h-[60px] bg-lawgic-logo cursor-pointer bg-contain bg-no-repeat bg-center"
           onClick={() => navigate("/")}
-        >
-          LAWGIC
-        </h1>
+        />
+      ) : (
+        <div
+          className="w-[200px] h-[60px] bg-lawgic-logo cursor-pointer bg-contain bg-no-repeat bg-center"
+          onClick={() => navigate("/")}
+        />
       )}
 
       {/* 로그인 or 로그아웃 + 프로필 동그라미 */}
@@ -56,6 +61,7 @@ const Header = ({ centeredLogo = false }) => {
 };
 
 export default Header;
+
 
 
 

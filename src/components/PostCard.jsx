@@ -4,6 +4,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import CommentInput from "./CommentInput";
+import PostVoteBox from "./PostVoteBox";
 
 const PostCard = ({ post, onCommentSubmit, onVote }) => {
   const [comment, setComment] = useState("");
@@ -28,69 +29,12 @@ const PostCard = ({ post, onCommentSubmit, onVote }) => {
       <div className="mt-2 text-gray-700">{post.content}</div>
 
       {/* 투표 기능 */}
-      <div className="mt-4">
-        <AnimatePresence mode="wait">
-          {!post.voted ? (
-            <motion.div
-              key="voteButtons"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="flex gap-4"
-            >
-              <button
-                className="bg-green-500 text-white px-4 py-1 rounded"
-                onClick={() => onVote(post.id, "yes")}
-              >
-                YES
-              </button>
-              <button
-                className="bg-red-500 text-white px-4 py-1 rounded"
-                onClick={() => onVote(post.id, "no")}
-              >
-                NO
-              </button>
-            </motion.div>
-          ) : (
-            <motion.div
-              key="voteResult"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="mt-4 p-4 bg-gray-100 rounded-md shadow-inner"
-            >
-              <div className="font-bold text-gray-700 mb-2">
-                {post.vote_title || "이 안건에 대해 어떻게 생각하나요?"}
-              </div>
-              <div className="flex divide-x-2 divide-white rounded-lg overflow-hidden shadow-md">
-                {/* YES 영역 */}
-                <div className="flex-1 bg-[#5cab7c] text-white flex flex-col items-center py-2">
-                  <span className="text-sm font-semibold">YES</span>
-                  <motion.div
-                    className="h-2 bg-white mt-2 w-full"
-                    initial={{ width: 0 }}
-                    animate={{ width: `${post.vote_result.yes}%` }}
-                    transition={{ duration: 1 }}
-                  />
-                  <span className="text-xl font-bold mt-1">{post.vote_result.yes}%</span>
-                </div>
-
-                {/* NO 영역 */}
-                <div className="flex-1 bg-[#5cab7c] text-white flex flex-col items-center py-2">
-                  <span className="text-sm font-semibold">NO</span>
-                  <motion.div
-                    className="h-2 bg-white mt-2 w-full"
-                    initial={{ width: 0 }}
-                    animate={{ width: `${post.vote_result.no}%` }}
-                    transition={{ duration: 1 }}
-                  />
-                  <span className="text-xl font-bold mt-1">{post.vote_result.no}%</span>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+      <PostVoteBox
+        voted={post.voted}
+        voteResult={post.vote_result}
+        voteTitle={post.vote_title}
+        onVote={(option) => onVote(post.id, option)}
+      />
 
       {/* 댓글 목록 */}
       <div className="mt-4 space-y-2">
@@ -124,3 +68,4 @@ export default PostCard;
 
 //5.12 22:36 동동적으로 만들어 놓음
 // 5.14 11:28 투표 부분 디자인 잘못된거 수정 , 투표 결과 나오는 애니메이션 기능 추가
+// 5.15 2:23 PostVoteBox import 해옴

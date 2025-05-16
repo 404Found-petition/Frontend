@@ -1,8 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import x11 from "./11.png";
-import line7 from "./line-7.svg";
-import line8 from "./line-8.svg";
+import x11 from "../assets/LAWGIC.png"; // 로고만 유지
 
 export const Screen = () => {
   const navigate = useNavigate();
@@ -16,13 +14,12 @@ export const Screen = () => {
       <div className="bg-white overflow-hidden w-[1440px] h-[1024px] relative">
         <div className="absolute w-[717px] h-[675px] top-[116px] left-[361px] bg-[#f6fff4] rounded-[15.57px] border-[2.8px] border-solid border-[#3f7d58] shadow-[0px_1.25px_1.25px_#00000040]">
 
-          {/* X 버튼 */}
+          {/* X 버튼 (이미지 → × 문자로 변경) */}
           <div
-            className="absolute w-[21px] h-[21px] top-[29px] left-[662px] cursor-pointer"
+            className="absolute top-[29px] left-[662px] text-[21px] font-bold text-gray-600 cursor-pointer"
             onClick={goHome}
           >
-            <img className="absolute" alt="Line" src={line7} />
-            <img className="absolute" alt="Line" src={line8} />
+            ×
           </div>
 
           <div className="absolute w-[279px] top-[229px] left-[212px] font-bold text-black text-[46px] text-center">

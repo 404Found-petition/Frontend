@@ -1,13 +1,12 @@
 import React, { useState } from "react";
 import axios from "axios";
-import image from "./image.png";
+import { Search } from "lucide-react"; // 돋보기 아이콘 import
 import { LoginAlertModal } from "./LoginAlertModal";
 
 export const SearchBar = ({ onSearchResult }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
 
-  // JWT 토큰 유무로 로그인 상태 판단
   const token = localStorage.getItem("accessToken");
   const isLoggedIn = !!token;
 
@@ -29,7 +28,7 @@ export const SearchBar = ({ onSearchResult }) => {
       );
 
       console.log("백엔드 응답:", response.data);
-      onSearchResult(response.data); // 부모에게 결과 전달
+      onSearchResult(response.data);
     } catch (error) {
       console.error("검색 실패:", error);
       alert("검색 중 오류가 발생했습니다.");
@@ -45,10 +44,12 @@ export const SearchBar = ({ onSearchResult }) => {
         onChange={(e) => setSearchTerm(e.target.value)}
         className="flex-grow h-[40px] bg-[#ecebeb] text-2xl text-black placeholder-[#a2a2a2] focus:outline-none"
       />
-      <img
-        className="w-[41px] h-11 cursor-pointer"
-        alt="검색"
-        src={image}
+
+      {/* ✅ 돋보기 아이콘 (코드 구현) */}
+      <Search
+        size={34}
+        strokeWidth={3}
+        className="text-green-700 cursor-pointer"
         onClick={handleSearchClick}
       />
 
@@ -60,3 +61,4 @@ export const SearchBar = ({ onSearchResult }) => {
 
 
 //2:54 그 청원 검색하려고 했을 때 비로그인시 검색 못하게 
+// 5.15 5:45 이미지 없애고 돋보기 아이콘

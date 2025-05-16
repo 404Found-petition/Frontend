@@ -1,7 +1,18 @@
 import React from "react";
 
-export const Tooltip = ({ name, party, tags = [], bills = [], imageSrc, position }) => {
+export const Tooltip = ({
+  name,
+  party,
+  tags,
+  bills,
+  imageSrc,
+  position
+}) => {
   if (!position) return null;
+
+  // ✅ undefined 대비 안전 처리
+  const safeTags = Array.isArray(tags) ? tags : [];
+  const safeBills = Array.isArray(bills) ? bills : [];
 
   return (
     <div
@@ -14,13 +25,13 @@ export const Tooltip = ({ name, party, tags = [], bills = [], imageSrc, position
         <p className="text-sm text-gray-500">{party}</p>
 
         <div className="mt-2 text-sm text-[#5cab7c]">
-          {tags.map((tag, idx) => (
+          {safeTags.map((tag, idx) => (
             <span key={idx} className="mr-1">#{tag}</span>
           ))}
         </div>
 
         <ul className="mt-3 list-disc list-inside text-[14px] text-gray-700 space-y-1">
-          {bills.slice(0, 3).map((bill, idx) => (
+          {safeBills.slice(0, 3).map((bill, idx) => (
             <li key={idx}>{bill}</li>
           ))}
         </ul>

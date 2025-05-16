@@ -10,7 +10,7 @@ const SeatChartStatus = ({ percentage }) => {
       if (current < percentage) {
         current += 1;
         setAnimatedPercent(current);
-        setTimeout(step, 10); // 속도 조절
+        setTimeout(step, 10);
       } else {
         setAnimatedPercent(percentage);
       }
@@ -22,17 +22,17 @@ const SeatChartStatus = ({ percentage }) => {
   const angle = (animatedPercent / 100) * 180; // 0~180도
 
   return (
-    <div className="absolute top-[630px] left-[414px] w-[416px] h-[209px] flex items-center justify-center">
+    <div className="absolute top-[0px] left-0 w-[416px] h-[209px] flex items-center justify-center">
       <svg width="416" height="209" viewBox="0 0 416 209">
         {/* 회색 배경 반원 */}
         <path
           d="M 0 208 A 208 208 0 0 1 416 208"
           fill="none"
-          stroke="#d9d9d9"
+          stroke="#8f8f8f"
           strokeWidth="36"
         />
 
-        {/* 시계바늘처럼 회전하는 선 */}
+        {/* 시계바늘 */}
         <line
           x1="208"
           y1="208"
@@ -55,8 +55,3 @@ const SeatChartStatus = ({ percentage }) => {
 };
 
 export default SeatChartStatus;
-
-
-
-// 정확한 위치 넣느라 수정 12:27
-// 반원 채워지는 그래픽 넣느라 수정 02:35

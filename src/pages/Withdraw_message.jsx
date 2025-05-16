@@ -1,18 +1,16 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import x10 from "./10.png";
-import line9 from "./line-9.svg";
-import line10 from "./line-10.svg";
+import x10 from "../assets/LAWGIC.png";
 
 export const Screen = () => {
   const navigate = useNavigate();
 
   const handleYes = () => {
-    navigate("/withdrawal-complete"); // 탈퇴 완료 페이지
+    navigate("/withdrawal-complete");
   };
 
   const handleNo = () => {
-    navigate("/user"); // 사용자 페이지
+    navigate("/user");
   };
 
   return (
@@ -20,13 +18,12 @@ export const Screen = () => {
       <div className="bg-white w-[1440px] h-[1024px] relative">
         <div className="absolute w-[717px] h-[675px] top-[116px] left-[361px] bg-[#f6fff4] rounded-[15.57px] border-[2.8px] border-solid border-[#3f7d58] shadow-[0px_1.25px_1.25px_#00000040]">
 
-          {/* X 버튼 */}
+          {/* X 버튼 (텍스트 ×로 대체) */}
           <div
-            className="absolute w-[21px] h-[21px] top-[29px] left-[662px] cursor-pointer"
+            className="absolute top-[29px] left-[662px] text-[21px] font-bold text-gray-600 cursor-pointer"
             onClick={handleNo}
           >
-            <img className="absolute" alt="Line" src={line9} />
-            <img className="absolute" alt="Line" src={line10} />
+            ×
           </div>
 
           {/* 안내 텍스트 */}

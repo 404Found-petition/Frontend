@@ -1,11 +1,9 @@
 import React from "react";
-import x10 from "./10.png";
-import image2 from "./image-2.png";
-import line5 from "./line-5.svg";
-import line6 from "./line-6.svg";
+import x10 from "../assets/LAWGIC.png";
+import image2 from "../assets/party.webp"; // ← 기존 .png 대신 .webp로 변경
 import { useNavigate } from "react-router-dom";
 
-export const Screen = () => {
+export const SignUpSuccess = () => {
   const navigate = useNavigate();
 
   const handleGoHome = () => {
@@ -16,9 +14,12 @@ export const Screen = () => {
     <div className="bg-white flex flex-row justify-center w-full">
       <div className="bg-white w-[1440px] h-[1024px] relative">
         <div className="absolute w-[717px] h-[675px] top-[116px] left-[361px] bg-[#f6fff4] rounded-[15.57px] border-[2.8px] border-solid border-[#5cab7c] shadow-[0px_1.25px_1.25px_#00000040]">
-          <div className="absolute w-[21px] h-[21px] top-[29px] left-[662px] cursor-pointer" onClick={handleGoHome}>
-            <img className="left-px absolute w-[21px] h-[21px] top-0" alt="Line" src={line5} />
-            <img className="left-0 absolute w-[21px] h-[21px] top-0" alt="Line" src={line6} />
+          {/* X 버튼 */}
+          <div
+            className="absolute top-[29px] left-[662px] text-[21px] font-bold text-gray-600 cursor-pointer"
+            onClick={handleGoHome}
+          >
+            ×
           </div>
 
           <div className="absolute w-[279px] h-[244px] top-44 left-[219px]">
@@ -48,7 +49,6 @@ export const Screen = () => {
 
         <div className="absolute w-[163px] h-[39px] top-8 left-[1243px]">
           <div className="absolute w-[39px] h-[39px] top-0 left-0 bg-[#93e1b3] rounded-[19.39px] border-[0.78px] border-solid border-black" />
-
           <div className="absolute w-[91px] top-1.5 left-[70px] [font-family:'Inter-Regular', Helvetica] font-normal text-black text-[21.1px] text-center tracking-[0] leading-[normal] whitespace-nowrap">
             LOGOUT
           </div>
