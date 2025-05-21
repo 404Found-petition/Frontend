@@ -3,6 +3,9 @@ import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import LogoutPopup from "./LogoutPopup"; // ✅ 팝업 컴포넌트
 import "../styles/global.css";
+import logoImage from "../assets/LAWGIC.png";
+
+
 
 const Header = () => {
   const navigate = useNavigate();
@@ -43,12 +46,13 @@ const Header = () => {
 
   const isCompactPage = [
     "/login", "/signup", "/success",
-    "/posts", "/petitionlist", "/petitions/history", "/posts/:id", "/user", "/posts/create"
+    "/posts", "/petitionlist", "/petitions/history", "/posts/:id", "/user", "/posts/create","/edit-user","/withdraw", "/withdrawal-complete"
   ].includes(location.pathname);
 
   const logoClass = isCompactPage
-    ? "absolute top-[-60px] left-[-250px] w-[800px] h-[240px]"
-    : "absolute top-[0px] left-[-140px] w-[800px] h-[240px]";
+  ? "absolute top-[-45px] left-[40px] h-[240px] w-auto"
+  : "absolute top-[20px] left-[120px] h-[240px] w-auto"; //홈화면
+
 
   const buttonPositionClass = isCompactPage
     ? "absolute top-[40px] right-[80px]"
@@ -58,11 +62,13 @@ const Header = () => {
     <div className="w-full h-[100px] bg-white relative">
       {/* 🔹 로고 */}
       <img
-        src="../assets/LAWGIC.png" // ⛏ 경로는 실제 로고 이미지 위치로 맞춰주세요
+        src={logoImage}
         alt="LAWGIC Logo"
-        className={`${logoClass} cursor-pointer`}
+        className={`${logoClass} object-contain cursor-pointer`}
         onClick={() => navigate("/")}
       />
+
+
       {/*<div
             className={`${logoClass} bg-lawgic-logo bg-contain bg-no-repeat bg-left cursor-pointer`}
             onClick={() => navigate("/")}

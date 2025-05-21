@@ -16,43 +16,46 @@ import './styles/global.css';
 import EditUserInfo from "./pages/EditUser"; // ✅ default import
 import WithdrawMessage from "./pages/Withdraw_message";
 import WithdrawalComplete from "./pages/WithdrawalComplete";
+import { PostProvider } from "./context/PostContext";
 
 // ✅ localStorage를 기반으로 로그인 여부 확인 (access 키 기준)
 const isLoggedIn = !!localStorage.getItem("access");
 
 function App() {
   return (
-    <Router>
-      <Header />
-      <ScrollToTop />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignUpPage />} />
-        <Route path="/success" element={<SignUpSuccess />} />
-        <Route path="/posts" element={<PostList />} />
-        <Route path="/posts/:id" element={<PostDetail />} />
-        <Route path="/posts/history" element={<PostListHistory />} />
-        <Route path="/petitions/history" element={<PetitionHistory />} />
-        <Route path="/petitionlist" element={<PetitionList />} />
-        <Route path="/edit-user" element={<EditUserInfo />} />
-        <Route path="/withdraw" element={<WithdrawMessage />} /> {/* ✅ 이 줄 추가 */}
-        <Route path="/withdrawal-complete" element={<WithdrawalComplete />} /> {/* ✅ 이 줄도 */}
+    <PostProvider>
+      <Router>
+        <Header />
+        <ScrollToTop />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignUpPage />} />
+          <Route path="/success" element={<SignUpSuccess />} />
+          <Route path="/posts" element={<PostList />} />
+          <Route path="/posts/:id" element={<PostDetail />} />
+          <Route path="/posts/history" element={<PostListHistory />} />
+          <Route path="/petitions/history" element={<PetitionHistory />} />
+          <Route path="/petitionlist" element={<PetitionList />} />
+          <Route path="/edit-user" element={<EditUserInfo />} />
+          <Route path="/withdraw" element={<WithdrawMessage />} /> {/* ✅ 이 줄 추가 */}
+          <Route path="/withdrawal-complete" element={<WithdrawalComplete />} /> {/* ✅ 이 줄도 */}
 
-        {/* 로그인된 사용자만 접근 가능한 경로들 */}
-        <Route
-          path="/posts/create"
-          element={isLoggedIn ? <PostCreate /> : <Navigate to="/login" />}
-        />
-        <Route
-          path="/user"
-          element={isLoggedIn ? <UserPage /> : <Navigate to="/login" />}
-        />
+          {/* 로그인된 사용자만 접근 가능한 경로들 */}
+          <Route
+            path="/posts/create"
+            element={isLoggedIn ? <PostCreate /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/user"
+            element={isLoggedIn ? <UserPage /> : <Navigate to="/login" />}
+          />
 
-        {/* 추후 404 페이지 필요 시 여기 추가 가능 */}
-        {/* <Route path="*" element={<NotFoundPage />} /> */}
-      </Routes>
-    </Router>
+          {/* 추후 404 페이지 필요 시 여기 추가 가능 */}
+          {/* <Route path="*" element={<NotFoundPage />} /> */}
+        </Routes>
+      </Router>
+    </PostProvider>
   );
 }
 

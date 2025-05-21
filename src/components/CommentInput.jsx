@@ -4,7 +4,7 @@ import React from "react";
 
 const CommentInput = ({ value, onChange, onSubmit }) => {
   return (
-    <div className="bg-white border border-gray-400 rounded-xl p-4 mt-6">
+    <div className="p-4 mt-6 bg-white border border-gray-400 rounded-xl">
       <textarea
         placeholder="댓글 작성..."
         className="w-full text-sm text-gray-600 resize-none focus:outline-none"
@@ -14,7 +14,7 @@ const CommentInput = ({ value, onChange, onSubmit }) => {
       />
       <div className="flex justify-end">
         <button
-          className="bg-[#5cab7c] text-white px-4 py-2 rounded-lg border border-black shadow"
+          className="px-4 py-2 text-white bg-green-700 border border-black rounded-lg shadow"
           onClick={onSubmit}
         >
           SUBMIT

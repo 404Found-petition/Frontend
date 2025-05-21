@@ -2,6 +2,7 @@
 // PostCard는 PostList가 받은 데이터를 넘겨 받아서 게시글 카드형으로 UI 구상해서 PostList에 넘겨줌
 
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // ✅ 추가
 import PostVoteBox from "./PostVoteBox";
 import { LoginAlertModal } from "./LoginAlertModal";
 
@@ -9,6 +10,7 @@ const PostCard = ({ post, onCommentSubmit, onVote }) => {
   const [comment, setComment] = useState("");
   const [showLoginModal, setShowLoginModal] = useState(false);
   const isLoggedIn = !!localStorage.getItem("token");
+  const navigate = useNavigate(); // ✅ 상세페이지 이동용
 
   const handleVote = (option) => {
     if (!isLoggedIn) {
@@ -31,8 +33,15 @@ const PostCard = ({ post, onCommentSubmit, onVote }) => {
   const commentCount = post.vote_title ? 1 : 2;
   const visibleComments = [...post.comments].slice(-commentCount);
 
+  const handleCardClick = () => {
+    navigate(`/posts/${post.id}`, { state: post });
+  };
+
   return (
-    <div className="w-full p-4 mb-6 bg-white border border-black shadow-sm rounded-xl min-h-[260px]">
+    <div
+      className="w-full p-4 mb-6 bg-white border border-black shadow-sm rounded-xl min-h-[260px] cursor-pointer"
+      onClick={handleCardClick}
+    >
       {/* 게시글 상단 정보 */}
       <div className="flex items-start justify-between mb-3">
         <div className="flex flex-col items-center min-w-[50px] mt-1">
@@ -53,20 +62,24 @@ const PostCard = ({ post, onCommentSubmit, onVote }) => {
 
       {/* 투표 영역 */}
       {post.vote_title && (
-        <div className="my-4">
+        <div
+          className="my-4"
+          onClick={(e) => e.stopPropagation()} // ✅ 클릭 전파 막기
+        >
           <PostVoteBox
             voted={post.voted}
             voteResult={post.vote_result}
             voteTitle={post.vote_title}
-            onVote={handleVote}
+            onVote={(option) => onVote(post.id, option)}
+            selectedOption={post.voted_option}
           />
         </div>
       )}
 
       {/* 댓글 렌더링 */}
-      <div className="pl-4">
+      <div className="flex flex-col pl-4 gap-y-6" onClick={(e) => e.stopPropagation()}>
         {visibleComments.map((c, idx) => (
-          <div key={idx} className="flex items-start mb-2 space-x-4">
+          <div key={idx} className="flex items-start space-x-4">
             <div className="w-6 h-6 mt-1 bg-white border-4 border-green-600 rounded-full" />
             <div>
               <div className="flex items-center gap-2 mb-1">
@@ -80,7 +93,10 @@ const PostCard = ({ post, onCommentSubmit, onVote }) => {
       </div>
 
       {/* 댓글 입력창 */}
-      <div className="mt-4 -mx-4">
+      <div
+        className="mt-4 -mx-4"
+        onClick={(e) => e.stopPropagation()} // ✅ 클릭 전파 막기
+      >
         <div className="w-full h-[1px] bg-black" />
         <div className="flex items-center px-4 py-2">
           <input
@@ -106,7 +122,6 @@ const PostCard = ({ post, onCommentSubmit, onVote }) => {
 };
 
 export default PostCard;
-
 
 
 //5.12 22:36 동동적으로 만들어 놓음

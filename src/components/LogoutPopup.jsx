@@ -8,13 +8,13 @@ const LogoutPopup = ({ onCancel, onConfirm }) => {
         <div className="flex justify-center gap-10 px-4">
           <button
             onClick={onCancel}
-            className="px-4 py-2 bg-[#5cab7c] text-white rounded-full w-[120px] hover:bg-[#4aa46d]"
+            className="px-4 py-2 bg-green-700 text-white rounded-full w-[120px] hover:bg-[#4aa46d]"
           >
             CANCEL
           </button>
           <button
             onClick={onConfirm}
-            className="px-4 py-2 bg-[#5cab7c] text-white rounded-full w-[120px] hover:bg-[#4aa46d]"
+            className="px-4 py-2 bg-green-700 text-white rounded-full w-[120px] hover:bg-[#4aa46d]"
           >
             LOGOUT
           </button>

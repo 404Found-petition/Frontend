@@ -46,25 +46,32 @@ const PostVoteBox = ({
             className="absolute top-0 bottom-0 w-[2px] bg-black z-10"
           />
 
-          {/* ✅ YES도 motion.div로 변경 */}
+          {/* YES 영역 */}
           <motion.div
             animate={{ width: `${yesPercent}%` }}
             transition={{ duration: 1.2 }}
-            className={`absolute top-0 left-0 h-full flex flex-col items-center justify-center ${selectedOption === "yes" ? "bg-green-600 text-white" : "bg-gray-200 text-gray-500"
+            className={`absolute top-0 left-0 h-full flex flex-col items-center justify-center ${selectedOption === "yes"
+                ? "bg-white text-green-700"
+                : "bg-green-600 text-white"
               }`}
           >
             <span>YES</span>
             <span className="text-lg font-bold">{Math.round(yesPercent)}%</span>
           </motion.div>
 
-          {/* ✅ NO도 동일하게 motion.div 유지 */}
+          {/* NO 영역 */}
           <motion.div
             animate={{ width: `${noPercent}%` }}
-            transition={{ duration: 1.2 }}
-            className={`absolute top-0 right-0 h-full flex flex-col items-center justify-center ${selectedOption === "no" ? "bg-green-600 text-white" : "bg-gray-200 text-gray-500"
+            transition={{
+              duration: 1.2,
+              ease: [0.25, 0.1, 0.25, 1], // cubic-bezier for 자연스러운 ease
+            }}
+            className={`absolute top-0 right-0 h-full flex flex-col items-center justify-center ${selectedOption === "no"
+                ? "bg-white text-green-700"
+                : "bg-green-600 text-white"
               }`}
             style={{
-              display: noPercent < 5 ? "none" : "flex", // 최소폭 보정
+              display: noPercent < 5 ? "none" : "flex",
             }}
           >
             <span>NO</span>

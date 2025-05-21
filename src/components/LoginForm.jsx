@@ -50,7 +50,7 @@ const LoginForm = ({ setLoginFailed, loginFailed }) => {
           />
           <button
             type="submit"
-            className="w-[111px] h-[30px] bg-[#5cab7c] text-white text-[14px] rounded-[9px] border border-black"
+            className="w-[111px] h-[30px] bg-green-700 text-white text-[14px] rounded-[9px] border border-black"
           >
             Log In
           </button>
@@ -59,7 +59,7 @@ const LoginForm = ({ setLoginFailed, loginFailed }) => {
         {/* 회원가입 */}
         <div className="flex justify-center mt-4">
           <button
-            className="w-[90px] h-[22px] bg-[#5cab7c] text-white text-[11px] rounded-[9px] border border-black"
+            className="w-[90px] h-[22px] bg-green-700 text-white text-[11px] rounded-[9px] border border-black"
             onClick={() => navigate("/signup")}
           >
             Sign Up

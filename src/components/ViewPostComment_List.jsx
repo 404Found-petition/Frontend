@@ -12,7 +12,7 @@ const ViewPostComment_List = ({ comments, bottomRef }) => {
           <div key={idx} className="mb-4">
             <div className="flex items-start space-x-2">
               {/* 프로필 원형 */}
-              <div className="w-[22px] h-[22px] rounded-full bg-[#93e1b3] border border-black mt-[2px]" />
+              <div className="w-6 h-6 mt-1 bg-white border-4 border-green-600 rounded-full" />
               
               {/* 닉네임과 날짜 */}
               <div className="flex flex-col">
