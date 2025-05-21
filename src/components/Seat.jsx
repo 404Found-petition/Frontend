@@ -5,11 +5,19 @@ const Seat = ({ seat, onHover, onLeave }) => {
 
   return (
     <div
-      className="absolute w-[27px] h-[27px] rounded-full border border-black bg-[#d9d9d9] hover:bg-green-300 cursor-pointer transition"
-      style={{ top: `${seat.top}px`, left: `${seat.left}px` }}
-      onMouseEnter={() => onHover(seat)}
-      onMouseLeave={onLeave}
+      className="absolute w-[23px] h-[23px] rounded-full border border-black select-none"
+      style={{
+        top: `${seat.top}px`,
+        left: `${seat.left}px`,
+        backgroundColor: seat.color || "#d9d9d9",
+        cursor: "pointer",
+        outline: "none",           // 포커스 외곽선 제거
+        userSelect: "none",        // 텍스트 선택 방지
+      }}
+      onMouseEnter={() => onHover && onHover(seat)}
+      onMouseLeave={() => onLeave && onLeave()}
     />
+
   );
 };
 

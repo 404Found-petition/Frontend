@@ -2,76 +2,82 @@
 // 게시글 투표 기능을 재사용 가능한 컴포넌트로 분리
 
 import React from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
-const PostVoteBox = ({ voted, voteResult, voteTitle, onVote }) => {
+const PostVoteBox = ({
+  voted = false,
+  voteResult = { yes: 0, no: 0 },
+  voteTitle = "",
+  onVote = () => { },
+  heightClass = "h-[64px]",
+  selectedOption = null,
+}) => {
+  const isLoggedIn = !!localStorage.getItem("token");
+  const total = voteResult.yes + voteResult.no;
+  const yesPercent = total ? (voteResult.yes / total) * 100 : 50;
+  const noPercent = 100 - yesPercent;
+
   return (
     <div className="mt-4">
-      <AnimatePresence mode="wait">
-        {!voted ? (
-          <motion.div
-            key="voteButtons"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="flex gap-4"
+      {!voted ? (
+        <div
+          className={`flex w-full ${heightClass} overflow-hidden font-bold text-white border border-green-700 rounded`}
+        >
+          <button
+            className="flex items-center justify-center w-1/2 text-lg bg-green-700 hover:bg-green-800"
+            onClick={() => isLoggedIn && onVote("yes")}
           >
-            <button
-              className="bg-green-500 text-white px-4 py-1 rounded"
-              onClick={() => onVote("yes")}
-            >
-              YES
-            </button>
-            <button
-              className="bg-red-500 text-white px-4 py-1 rounded"
-              onClick={() => onVote("no")}
-            >
-              NO
-            </button>
-          </motion.div>
-        ) : (
-          <motion.div
-            key="voteResult"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="mt-4 p-4 bg-gray-100 rounded-md shadow-inner"
+            YES
+          </button>
+          <div className="w-[1px] bg-white" />
+          <button
+            className="flex items-center justify-center w-1/2 text-lg bg-green-700 hover:bg-green-800"
+            onClick={() => isLoggedIn && onVote("no")}
           >
-            <div className="font-bold text-gray-700 mb-2">
-              {voteTitle || "이 안건에 대해 어떻게 생각하나요?"}
-            </div>
-            <div className="flex divide-x-2 divide-white rounded-lg overflow-hidden shadow-md">
-              {/* YES 영역 */}
-              <div className="flex-1 bg-[#5cab7c] text-white flex flex-col items-center py-2">
-                <span className="text-sm font-semibold">YES</span>
-                <motion.div
-                  className="h-2 bg-white mt-2 w-full"
-                  initial={{ width: 0 }}
-                  animate={{ width: `${voteResult.yes}%` }}
-                  transition={{ duration: 1 }}
-                />
-                <span className="text-xl font-bold mt-1">{voteResult.yes}%</span>
-              </div>
+            NO
+          </button>
+        </div>
+      ) : (
+        <div className="relative w-full h-[64px] border border-green-700 rounded overflow-hidden">
+          {/* 가운데 막대 */}
+          <motion.div
+            animate={{ left: `${yesPercent}%` }}
+            transition={{ duration: 1.2 }}
+            className="absolute top-0 bottom-0 w-[2px] bg-black z-10"
+          />
 
-              {/* NO 영역 */}
-              <div className="flex-1 bg-[#5cab7c] text-white flex flex-col items-center py-2">
-                <span className="text-sm font-semibold">NO</span>
-                <motion.div
-                  className="h-2 bg-white mt-2 w-full"
-                  initial={{ width: 0 }}
-                  animate={{ width: `${voteResult.no}%` }}
-                  transition={{ duration: 1 }}
-                />
-                <span className="text-xl font-bold mt-1">{voteResult.no}%</span>
-              </div>
-            </div>
+          {/* ✅ YES도 motion.div로 변경 */}
+          <motion.div
+            animate={{ width: `${yesPercent}%` }}
+            transition={{ duration: 1.2 }}
+            className={`absolute top-0 left-0 h-full flex flex-col items-center justify-center ${selectedOption === "yes" ? "bg-green-600 text-white" : "bg-gray-200 text-gray-500"
+              }`}
+          >
+            <span>YES</span>
+            <span className="text-lg font-bold">{Math.round(yesPercent)}%</span>
           </motion.div>
-        )}
-      </AnimatePresence>
+
+          {/* ✅ NO도 동일하게 motion.div 유지 */}
+          <motion.div
+            animate={{ width: `${noPercent}%` }}
+            transition={{ duration: 1.2 }}
+            className={`absolute top-0 right-0 h-full flex flex-col items-center justify-center ${selectedOption === "no" ? "bg-green-600 text-white" : "bg-gray-200 text-gray-500"
+              }`}
+            style={{
+              display: noPercent < 5 ? "none" : "flex", // 최소폭 보정
+            }}
+          >
+            <span>NO</span>
+            <span className="text-lg font-bold">{Math.round(noPercent)}%</span>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 };
 
 export default PostVoteBox;
+
+
 
 // 5.15 1:59 PostList에 있던 투표 기능 따로 빼고 이거 다 import 해서 PostList, PostDetail에서 쓸거임

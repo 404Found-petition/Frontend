@@ -1,13 +1,23 @@
 import React from "react";
-import x10 from "../assets/LAWGIC.png";
-import image2 from "../assets/party.webp"; // ← 기존 .png 대신 .webp로 변경
 import { useNavigate } from "react-router-dom";
+import x10 from "../assets/LAWGIC.png";
+import image2 from "../assets/party.webp"; // 🎉 프로필 이미지
 
 export const SignUpSuccess = () => {
   const navigate = useNavigate();
 
   const handleGoHome = () => {
     navigate("/");
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("accessToken"); // access 토큰 제거
+    localStorage.removeItem("refreshToken"); // 필요 시 refresh도 제거
+    navigate("/");
+  };
+
+  const goToUserPage = () => {
+    navigate("/user");
   };
 
   return (
@@ -23,40 +33,52 @@ export const SignUpSuccess = () => {
           </div>
 
           <div className="absolute w-[279px] h-[244px] top-44 left-[219px]">
-            <div className="absolute w-[279px] top-0 left-0 [font-family:'Inter-Bold', Helvetica] font-bold text-black text-[45.6px] text-center tracking-[0] leading-[normal]">
+            <div className="absolute w-[279px] top-0 left-0 font-bold text-black text-[45.6px] text-center">
               SUCCESS
             </div>
 
             <img
               className="absolute w-[164px] h-[164px] top-20 left-[58px] object-cover"
-              alt="Image"
+              alt="Profile"
               src={image2}
             />
           </div>
 
-          <div className="absolute w-[448px] top-[453px] left-32 [font-family:'Inter-Bold', Helvetica] font-bold text-black text-[29.3px] text-center tracking-[0] leading-[normal]">
+          <div className="absolute w-[448px] top-[453px] left-32 font-bold text-black text-[29.3px] text-center">
             Welcome to Lawgic!
           </div>
 
-          <div className="absolute w-[114px] h-[30px] top-[541px] left-[296px] cursor-pointer" onClick={handleGoHome}>
-            <div className="relative w-28 h-[30px] bg-[#5cab7c] rounded-[3.04px] border-[0.61px] border-solid border-black">
-              <div className="absolute w-[58px] top-[7px] left-[27px] [font-family:'Inter-Medium', Helvetica] font-medium text-white text-[12.2px] text-center tracking-[0] leading-[normal]">
-                HOME
-              </div>
+          {/* HOME 버튼 */}
+          <div
+            className="absolute w-[114px] h-[30px] top-[541px] left-[296px] cursor-pointer"
+            onClick={handleGoHome}
+          >
+            <div className="relative w-28 h-[30px] bg-[#5cab7c] rounded-[3.04px] border border-black flex items-center justify-center">
+              <div className="text-white text-[12.2px] font-medium">HOME</div>
             </div>
           </div>
         </div>
 
-        <div className="absolute w-[163px] h-[39px] top-8 left-[1243px]">
-          <div className="absolute w-[39px] h-[39px] top-0 left-0 bg-[#93e1b3] rounded-[19.39px] border-[0.78px] border-solid border-black" />
-          <div className="absolute w-[91px] top-1.5 left-[70px] [font-family:'Inter-Regular', Helvetica] font-normal text-black text-[21.1px] text-center tracking-[0] leading-[normal] whitespace-nowrap">
+        {/* 프로필 + Logout */}
+        <div className="absolute w-[163px] h-[39px] top-8 left-[1243px] flex items-center space-x-4">
+          {/* 프로필 (클릭 시 유저 페이지 이동) */}
+          <div
+            className="w-[39px] h-[39px] bg-[#93e1b3] rounded-full border border-black cursor-pointer"
+            onClick={goToUserPage}
+          />
+          {/* Logout 텍스트 (클릭 시 로그아웃) */}
+          <div
+            className="text-black text-[21.1px] text-center cursor-pointer"
+            onClick={handleLogout}
+          >
             LOGOUT
           </div>
         </div>
 
+        {/* 로고 (홈 이동) */}
         <img
           className="absolute w-[199px] h-[65px] top-[19px] left-[35px] object-cover cursor-pointer"
-          alt="Element"
+          alt="Logo"
           src={x10}
           onClick={handleGoHome}
         />
@@ -64,3 +86,7 @@ export const SignUpSuccess = () => {
     </div>
   );
 };
+
+export default SignUpSuccess;
+
+//5.18 1:22 프로필 누르면 UserPage, 로그아웃 누르면 로그아웃 되도록

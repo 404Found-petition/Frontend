@@ -1,60 +1,104 @@
-// Header.jsx
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-import "../styles/global.css"; // ⬅️ bg-lawgic-logo 클래스 포함되어 있어야 함
+import LogoutPopup from "./LogoutPopup"; // ✅ 팝업 컴포넌트
+import "../styles/global.css";
 
-const Header = ({ centeredLogo = false }) => {
+const Header = () => {
   const navigate = useNavigate();
-  const isLoggedIn = !!localStorage.getItem("access");
+  const location = useLocation();
 
+  const [showLogoutPopup, setShowLogoutPopup] = useState(false);
+
+  const accessToken = localStorage.getItem("access");
+  const isLoggedIn =
+    !!accessToken && accessToken !== "undefined" && accessToken !== "null";
+
+  // ✅ 프론트 테스트용 로그아웃 처리
   const handleLogout = async () => {
+    const isFrontendOnly = true;
+
+    if (isFrontendOnly) {
+      localStorage.removeItem("access");
+      localStorage.removeItem("refresh");
+      navigate("/");
+      window.location.reload();
+      return;
+    }
+
+    // 🔌 백엔드 연동 시 사용
     try {
       const refreshToken = localStorage.getItem("refresh");
       await axios.post("/api/logout/", { refresh: refreshToken });
-
       localStorage.removeItem("access");
       localStorage.removeItem("refresh");
-
       navigate("/");
+      window.location.reload();
     } catch (err) {
       console.error("로그아웃 실패", err);
     }
   };
 
+  const hideLoginControls = ["/login", "/signup", "/success"].includes(location.pathname);
+
+  const isCompactPage = [
+    "/login", "/signup", "/success",
+    "/posts", "/petitionlist", "/petitions/history", "/posts/:id", "/user", "/posts/create"
+  ].includes(location.pathname);
+
+  const logoClass = isCompactPage
+    ? "absolute top-[-60px] left-[-250px] w-[800px] h-[240px]"
+    : "absolute top-[0px] left-[-140px] w-[800px] h-[240px]";
+
+  const buttonPositionClass = isCompactPage
+    ? "absolute top-[40px] right-[80px]"
+    : "absolute top-[110px] right-[200px]";
+
   return (
-    <div className="w-full h-[100px] bg-[#f5f5f5] flex items-center px-14 border-b border-gray-300 relative">
-      {/* 로고 위치: 가운데 or 왼쪽 */}
-      {centeredLogo ? (
-        <div
-          className="absolute left-1/2 transform -translate-x-1/2 w-[200px] h-[60px] bg-lawgic-logo cursor-pointer bg-contain bg-no-repeat bg-center"
-          onClick={() => navigate("/")}
-        />
-      ) : (
-        <div
-          className="w-[200px] h-[60px] bg-lawgic-logo cursor-pointer bg-contain bg-no-repeat bg-center"
-          onClick={() => navigate("/")}
-        />
+    <div className="w-full h-[100px] bg-white relative">
+      {/* 🔹 로고 */}
+      <img
+        src="../assets/LAWGIC.png" // ⛏ 경로는 실제 로고 이미지 위치로 맞춰주세요
+        alt="LAWGIC Logo"
+        className={`${logoClass} cursor-pointer`}
+        onClick={() => navigate("/")}
+      />
+      {/*<div
+            className={`${logoClass} bg-lawgic-logo bg-contain bg-no-repeat bg-left cursor-pointer`}
+            onClick={() => navigate("/")}
+        />*/}
+
+      {/* 🔹 로그인/로그아웃 버튼 */}
+      {!hideLoginControls && (
+        isLoggedIn ? (
+          <div className={`${buttonPositionClass} flex items-center gap-2 whitespace-nowrap z-10`}>
+            <div
+              className="w-[35px] h-[35px] bg-[#93e1b3] rounded-full border border-black cursor-pointer"
+              onClick={() => navigate("/user")}
+            />
+            <span
+              onClick={() => setShowLogoutPopup(true)}
+              className="text-[#5cab7c] font-semibold text-[16px] cursor-pointer leading-none whitespace-nowrap"
+            >
+              Logout
+            </span>
+          </div>
+        ) : (
+          <button
+            onClick={() => navigate("/login")}
+            className={`${buttonPositionClass} text-[#5cab7c] font-semibold text-[16px] cursor-pointer bg-transparent border-none outline-none p-0 m-0 select-none z-10`}
+          >
+            Login
+          </button>
+        )
       )}
 
-      {/* 로그인 or 로그아웃 + 프로필 동그라미 */}
-      {isLoggedIn ? (
-        <div className="flex items-center space-x-3 ml-auto">
-          <div className="w-[39px] h-[39px] bg-[#93e1b3] rounded-full border border-black" />
-          <button
-            onClick={handleLogout}
-            className="bg-[#5cab7c] text-white px-4 py-2 rounded shadow border border-black"
-          >
-            Logout
-          </button>
-        </div>
-      ) : (
-        <button
-          onClick={() => navigate("/login")}
-          className="ml-auto bg-[#5cab7c] text-white px-4 py-2 rounded shadow border border-black"
-        >
-          Login
-        </button>
+      {/* 🔹 로그아웃 팝업 */}
+      {showLogoutPopup && (
+        <LogoutPopup
+          onCancel={() => setShowLogoutPopup(false)}
+          onConfirm={handleLogout}
+        />
       )}
     </div>
   );
@@ -63,13 +107,7 @@ const Header = ({ centeredLogo = false }) => {
 export default Header;
 
 
-
-
-// localStorage에 저장된 JWT 토큰 유무로 로그인 상태 판단
-// 로그인 상태이면 초록색 프로필 동그라미와 Logout 버튼 표시
-// ㄴ 안 됨 구현 안되어 있음
-// 비로그인 상태이면 Login 버튼만 표시
-// Logout 클릭 시 토큰 삭제하고 페이지 새로고침하여 상태 반영
-
-// 5.14 12:01 로그아웃 버튼 클릭 시 로그아웃 되도록
-// 5.14 21:27 PetitionCard, PostCard 시 로고 위치 다르게 위치할 수 있도록 변경
+//5.20 20:32 로그인하면 로그인 자리에 프로필 사진 로그아웃 뜨도록
+//5.20 21:06 프로필 사진 누르면 유저 페이지 이동, 로그아웃 되도록
+//5.21 12:39 와 이제 어디서든 로고 누르면 홈화면으로 가진다 드디어
+//5.21 12:59 와 이제 로그아웃도 된다

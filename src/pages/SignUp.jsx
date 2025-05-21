@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import x9 from "../assets/LAWGIC.png";
 import PasswordMismatchPopup from "../components/PasswordMismatchPopup";
 import IdDuplicatePopup from "../components/IdDuplicatePopup";
+import IdCheckRequiredPopup from "../components/IdCheckRequiredPopup";
+
 
 export const SignUp = () => {
   const navigate = useNavigate();
@@ -16,6 +18,8 @@ export const SignUp = () => {
   const [idChecked, setIdChecked] = useState(false);
   const [isIdAvailable, setIsIdAvailable] = useState(false);
   const [showIdDuplicatePopup, setShowIdDuplicatePopup] = useState(false);
+  const [showIdCheckRequiredPopup, setShowIdCheckRequiredPopup] = useState(false);
+
 
   const handleDuplicateCheck = () => {
     setIdChecked(true);
@@ -23,6 +27,11 @@ export const SignUp = () => {
   };
 
   const handleSubmit = () => {
+    if (!idChecked) {
+      setShowIdCheckRequiredPopup(true);
+      return;
+    }
+
     if (idChecked && !isIdAvailable) {
       setShowIdDuplicatePopup(true);
       return;
@@ -182,6 +191,14 @@ export const SignUp = () => {
             <IdDuplicatePopup onClose={() => setShowIdDuplicatePopup(false)} />
           </div>
         )}
+        
+        {/* 중복 확인 안 하고 SUBMIT 할 때 */}
+        {showIdCheckRequiredPopup && (
+          <div className="absolute top-[360px] left-[564px] z-50">
+            <IdCheckRequiredPopup onClose={() => setShowIdCheckRequiredPopup(false)} />
+          </div>
+        )}
+
       </div>
     </div>
   );
@@ -196,3 +213,4 @@ export default SignUp;
 //5.16 12:49 진짜 다시 수정 제발 정확히 돼라 에라이
 //5.16 1:28 진짜 위치 됐고 비밀번호 불일치 팝업 위치도 수정 완   360/564
 //5.16 1:48 사용중 아이디 SUBMIT 할 때 안내창 팝업 뜨도록
+//5.17 14:52 중복 확인 안 하고 SUBMIT 할 때 안내창 팝업 뜨도록

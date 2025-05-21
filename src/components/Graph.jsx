@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { ExpandedBarGraph } from "./ExpandedBarGraph";
 
-const MAX_BAR_HEIGHT = 400;
+// ✅ 시각적으로 격차가 확실히 느껴지도록 바 높이 설정
+const MAX_BAR_HEIGHT = 300;
 
 const CATEGORY_COLORS = {
   "정치·행정": "#70B7FF",
@@ -17,9 +18,8 @@ const Graph = () => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    // ✅ 백 연결 전이라 mock 데이터 삽입
     const mockData = [
-      { category: "정치·행정", count: 40 },
+      { category: "정치·행정", count: 100 },
       { category: "사회", count: 32 },
       { category: "경제·산업", count: 25 },
       { category: "교육", count: 20 },
@@ -36,49 +36,70 @@ const Graph = () => {
   }, []);
 
   const sortedData = [...data].sort((a, b) => b.value - a.value);
-  const baseLeft = 111;
-  const gap = 70;
+
+  // ✅ scale 제거했으므로 모든 값은 실제 px로 조정
+  const barWidth = 27;          // scale 0.444로 줄였던 실제 크기
+  const baseLeft = 49;          // base 위치 조정
+  const gap = 40;               // 막대 간 간격
 
   return (
     <>
+      {/* 외부 박스: 고정 크기 */}
       <div
-        className="w-[871px] h-[250px] relative bg-[#fffcfc] border border-black rounded-[6px] z-10"
-        onMouseEnter={() => setHovered(true)}
+        className="w-[400px] h-[400px] relative bg-[#fffcfc] border border-gray-300 rounded-[6px] z-10 cursor-pointer shadow-md overflow-hidden"
+        onClick={() => setHovered(true)}
       >
-        <div className="absolute w-[659px] h-[3px] bg-black top-[210px] left-[105px]" />
+        {/* 내부 그래프 */}
+        <div
+          className="absolute"
+          style={{
+            bottom: "15px",
+            left: "50%",
+            transform: "translateX(-50%)", // ✅ scale 제거
+            width: "387px",
+            height: "250px",
+          }}
+        >
+          {/* 기준선 */}
+          <div className="absolute w-[292px] h-[2.5px] bg-black top-[210px] left-[47px]" />
 
-        {sortedData.slice(0, 5).map((item, idx) => {
-          const height = (item.value / 100) * MAX_BAR_HEIGHT * 0.5;
-          const top = 210 - height;
-          return (
+          {/* 막대 그래프 */}
+          {sortedData.slice(0, 5).map((item, idx) => {
+            const height = Math.pow(item.value / 100, 1.0) * MAX_BAR_HEIGHT;
+            const top = 210 - height;
+            return (
+              <div
+                key={item.category}
+                className="absolute border border-black rounded-[2px] transition-all duration-300"
+                style={{
+                  width: `${barWidth}px`,
+                  height: `${height}px`,
+                  top: `${top}px`,
+                  left: `${baseLeft + idx * gap}px`,
+                  backgroundColor: item.color,
+                }}
+              />
+            );
+          })}
+
+          {/* 라벨 */}
+          {sortedData.slice(0, 5).map((item, idx) => (
             <div
-              key={item.category}
-              className="absolute w-[38px] border border-black rounded-[2px] transition-all duration-300"
+              key={`label-${item.category}`}
+              className="absolute text-[11px] font-semibold text-black text-center whitespace-nowrap"
               style={{
-                height: `${height}px`,
-                top: `${top}px`,
-                left: `${baseLeft + idx * gap}px`,
-                backgroundColor: item.color
+                top: "220px",
+                left: `${baseLeft + idx * gap + barWidth / 2}px`,
+                transform: "translateX(-50%)",
               }}
-            />
-          );
-        })}
-
-        {sortedData.slice(0, 5).map((item, idx) => (
-          <div
-            key={`label-${item.category}`}
-            className="absolute text-[12px] font-normal text-black text-center whitespace-nowrap"
-            style={{
-              top: "220px",
-              left: `${baseLeft + idx * gap}px`,
-              width: "60px"
-            }}
-          >
-            {item.category}
-          </div>
-        ))}
+            >
+              {item.category}
+            </div>
+          ))}
+        </div>
       </div>
 
+      {/* 확대 그래프 */}
       {hovered && (
         <ExpandedBarGraph data={sortedData} onClose={() => setHovered(false)} />
       )}

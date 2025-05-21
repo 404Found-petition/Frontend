@@ -1,17 +1,10 @@
 import React, { useState } from "react";
-import x8 from "../assets/LAWGIC.png";
-import { DivWrapper } from "./DivWrapper";
-import { Group } from "./Group";
-import { GroupWrapper } from "./GroupWrapper";
-import { OverlapGroupWrapper } from "./OverlapGroupWrapper";
-import { OverlapWrapper } from "./OverlapWrapper";
-import Header from "../components/Header";
 import { useNavigate } from "react-router-dom";
-import { Box } from "../components/View";
+import WithdrawMessage from "../pages/Withdraw_message"; // ✅ 모달 컴포넌트 import
 
-// ✅ 원형 퍼센트 그래프 컴포넌트 추가
+// ✅ CircularPercent (최종 스타일)
 const CircularPercent = ({ percentage }) => {
-  const radius = 30;
+  const radius = 20;
   const stroke = 5;
   const normalizedRadius = radius - stroke / 2;
   const circumference = normalizedRadius * 2 * Math.PI;
@@ -19,33 +12,32 @@ const CircularPercent = ({ percentage }) => {
     circumference - (percentage / 100) * circumference;
 
   return (
-    <svg height="76" width="76">
+    <svg height="48" width="48">
       <circle
         stroke="#E5E5E5"
         fill="transparent"
         strokeWidth={stroke}
         r={normalizedRadius}
-        cx="38"
-        cy="38"
+        cx="24"
+        cy="24"
       />
       <circle
         stroke="#5cab7c"
         fill="transparent"
         strokeWidth={stroke}
-        strokeLinecap="round"
         strokeDasharray={`${circumference} ${circumference}`}
         strokeDashoffset={strokeDashoffset}
         r={normalizedRadius}
-        cx="38"
-        cy="38"
+        cx="24"
+        cy="24"
+        transform="rotate(-90 24 24)"
       />
       <text
-        x="38"
-        y="42"
+        x="24"
+        y="28"
         textAnchor="middle"
-        fontSize="14"
+        fontSize="11"
         fill="black"
-        fontWeight="bold"
       >
         {percentage}%
       </text>
@@ -53,74 +45,109 @@ const CircularPercent = ({ percentage }) => {
   );
 };
 
-export const User = () => {
+const UserPage = () => {
   const navigate = useNavigate();
-  const [showLogoutPopup, setShowLogoutPopup] = useState(false);
+  const [showWithdrawModal, setShowWithdrawModal] = useState(false); // ✅ 모달 상태
 
-  const handleLogout = () => {
-    localStorage.removeItem("accessToken");
-    navigate("/");
+  const user = {
+    id: "USER_ID",
+    name: "김땡땡",
+    phone: "010-1234-5678",
+    posts: [
+      { date: "2025.03.31", title: "게시글 제목제목제목" },
+      { date: "2025.03.31", title: "게시글 제목제목제목" },
+      { date: "2025.03.31", title: "게시글 제목제목제목" },
+      { date: "2025.03.31", title: "게시글 제목제목제목" },
+    ],
+    predictions: [
+      { date: "2025.03.31", summary: "의료 관련 법률 개정을 제안합니다", percent: 92 },
+      { date: "2025.03.31", summary: "촉법소년 연령을 낮춰주세요", percent: 92 },
+      { date: "2025.03.31", summary: "모두 정당한 교육을 받을 수 있게 해주세요", percent: 92 },
+    ],
   };
 
   return (
-    <div className="bg-white flex flex-row justify-center w-full">
-      <Header />
-      <div className="bg-white overflow-hidden w-[1440px] h-[1024px] relative">
-        <div className="absolute w-[179px] top-[126px] left-[303px] text-black text-[40.3px] text-center">USER_ID</div>
-        <div className="absolute w-[121px] top-[206px] left-[570px] text-black text-4xl text-center">김땡땡</div>
-
-        <div className="absolute w-[535px] h-[49px] top-[261px] left-[306px]">
-          <div className="absolute w-[271px] top-0 left-[264px] text-black text-4xl">010-1234-5678</div>
-          <div className="absolute w-[284px] top-1 left-0 text-[#444444] text-[32px] whitespace-nowrap">Phone number</div>
-        </div>
-
-        <div className="absolute w-[95px] top-[206px] left-[306px] text-[#444444] text-[32px] whitespace-nowrap">NAME</div>
-
-        <div className="absolute w-[264px] top-96 left-[92px] text-[#444444] text-[32px] whitespace-nowrap">내가 작성한 게시글</div>
-        <p className="w-[413px] top-96 left-[780px] text-[#444444] text-[32px] absolute whitespace-nowrap">청원 이행 확률 예측 사용기록</p>
-
-        <div className="w-[47px] top-[364px] left-[635px] text-black text-[40px] text-center absolute cursor-pointer" onClick={() => navigate("/posts/history")}>...</div>
-        <div className="w-[47px] top-[364px] left-[1330px] text-black text-[40px] text-center absolute cursor-pointer" onClick={() => navigate("/petitions/history")}>...</div>
-
-        <div className="absolute w-[157px] h-[157px] top-[140px] left-[92px] bg-[#93e1b3] rounded-full border-[3.14px] border-black" />
-
-        <div className="absolute w-[139px] h-[37px] top-[134px] left-[558px] cursor-pointer" onClick={() => navigate("/edit-user")}>...
-        </div>
-        <div className="absolute w-[139px] h-[37px] top-[134px] left-[721px] cursor-pointer" onClick={() => navigate("/withdraw")}>...
-        </div>
-
-        {/* ✅ 게시글/청원 기록 카드 영역 */}
-        <div className="absolute w-[1400px] h-[373px] top-[454px] left-[92px]">
-          <Group />
-          <OverlapWrapper />
-          <OverlapGroupWrapper />
-          <GroupWrapper />
-          <DivWrapper />
-
-          {/* ✅ 퍼센트 카드 1 */}
-          <div className="absolute top-[18px] left-[1171px]">
-            <CircularPercent percentage={92} />
-          </div>
-
-          {/* ✅ 퍼센트 카드 2 */}
-          <div className="absolute top-[143px] left-[1171px]">
-            <CircularPercent percentage={92} />
-          </div>
-
-          {/* ✅ 퍼센트 카드 3 */}
-          <div className="absolute top-[266px] left-[1171px]">
-            <CircularPercent percentage={92} />
+    <div className="flex flex-col items-center w-full bg-white">
+      <div className="w-[1080px] min-h-screen py-10 px-8 relative">
+        {/* 사용자 기본 정보 */}
+        <div className="flex items-start gap-10 mb-10">
+          <div className="w-[120px] h-[120px] bg-[#93e1b3] rounded-full border border-black" />
+          <div>
+            <div className="flex items-center gap-4 mb-2">
+              <h2 className="text-3xl font-semibold">{user.id}</h2>
+              <button
+                className="bg-[#5CAB7C] text-white px-3 py-1 text-sm rounded"
+                onClick={() => navigate("/edit-user")}
+              >
+                회원정보 수정하기
+              </button>
+              <button
+                className="bg-[#F30707] text-white px-3 py-1 text-sm rounded"
+                onClick={() => navigate("/withdraw")}
+              >
+                탈퇴하기
+              </button>
+            </div>
+            <div className="text-lg text-[#555] mb-1">
+              NAME <span className="ml-4 text-black font-bold">{user.name}</span>
+            </div>
+            <div className="text-lg text-[#555]">
+              Phone number <span className="ml-4 text-black font-bold">{user.phone}</span>
+            </div>
           </div>
         </div>
 
-        <div className="absolute w-[76px] top-[37px] left-[1313px] text-black text-[21.1px] text-center cursor-pointer" onClick={() => setShowLogoutPopup(true)}>Logout</div>
+        {/* 기록 타이틀 */}
+        <div className="flex mb-4">
+          <h3 className="text-xl font-semibold pl-[5px] w-1/2">내가 작성한 게시글</h3>
+          <h3 className="text-xl font-semibold pl-[20px] w-1/2">청원 이행 확률 예측 사용기록</h3>
+        </div>
 
-        <img className="absolute w-[199px] h-[66px] top-[19px] left-[35px] object-cover cursor-pointer" alt="Element" src={x8} onClick={() => navigate("/")} />
+        {/* 게시글 + 예측 카드 */}
+        <div className="grid grid-cols-2 gap-8">
+          {/* 왼쪽 - 게시글 4개 */}
+          <div className="flex flex-col gap-4">
+            {user.posts.map((post, i) => (
+              <div
+                key={i}
+                className="border border-[#5CAB7C] rounded-lg px-4 py-2 text-sm"
+              >
+                <div className="text-xs text-gray-600 mb-1">{post.date}</div>
+                <div className="text-base font-medium">{post.title}</div>
+              </div>
+            ))}
+          </div>
 
-        {showLogoutPopup && (
-          <Box onCancel={() => setShowLogoutPopup(false)} onLogout={handleLogout} />
-        )}
+          {/* 오른쪽 - 예측 3개 */}
+          <div className="flex flex-col gap-6 pt-[4px]">
+            {user.predictions.map((item, i) => (
+              <div
+                key={i}
+                className="border border-[#5CAB7C] rounded-lg px-4 py-2 text-sm flex justify-between items-center"
+              >
+                <div>
+                  <div className="text-xs text-gray-600 mb-1">{item.date}</div>
+                  <div className="text-base">{item.summary}</div>
+                </div>
+                <CircularPercent percentage={item.percent} />
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
+
+      {/* ✅ 탈퇴 확인 모달 표시 */}
+      {showWithdrawModal && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center">
+          <WithdrawMessage />
+        </div>
+      )}
     </div>
   );
 };
+
+export default UserPage;
+
+
+//5.20 21:48 더미데이터 넣어서 이제 유저페이지 들어가지기는 함
+//5.20 22:25 디자인 전체적으로 수정 제대로 되어있는지 1차 수정

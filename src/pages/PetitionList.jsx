@@ -1,94 +1,116 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import Header from "../components/Header";
 import { PetitionListCard } from "../components/PetitionListCard";
 
-const PetitionList = ({ apiEndpoint = "/api/posts/" }) => {
-  const navigate = useNavigate();
+const PetitionList = () => {
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
+  const PETITIONS_PER_PAGE = 24;
+
+  // ✅ 더미 데이터 30개
+  const dummyPosts = Array.from({ length: 30 }, (_, i) => ({
+    department: ["보건복지부", "교육부", "환경부", "국토교통부", "산업통상자원부", "문화체육관광부"][i % 6],
+    title: `청원 제목 ${i + 1}`,
+    content: `이것은 ${i + 1}번째 청원의 요약입니다.`,
+    percentage: 50 + (i % 50),
+  }));
+
   useEffect(() => {
-    axios
-      .get(`${apiEndpoint}?page=${page}`)
-      .then((res) => {
-        const safeResults = Array.isArray(res.data?.results) ? res.data.results : [];
-        const safePages = typeof res.data?.total_pages === "number" ? res.data.total_pages : 1;
+    const start = (page - 1) * PETITIONS_PER_PAGE;
+    const end = start + PETITIONS_PER_PAGE;
+    const pagePosts = dummyPosts.slice(start, end);
 
-        setPosts(safeResults);
-        setTotalPages(safePages);
-      })
-      .catch((err) => {
-        console.error("❌ 백엔드 응답 에러:", err);
-
-        // ✅ fallback mock 데이터
-        setPosts([
-          {
-            title: "보건복지부",
-            content: "의료 서비스 개선을 위한 청원입니다.",
-            percentage: 72,
-          },
-          {
-            title: "교육부",
-            content: "고등교육 입시제도 개편 제안입니다.",
-            percentage: 63,
-          },
-          {
-            title: "환경부",
-            content: "탄소중립을 위한 법률 개정 요청입니다.",
-            percentage: 58,
-          },
-          {
-            title: "국토교통부",
-            content: "대중교통 요금 인하 제안 청원입니다.",
-            percentage: 47,
-          },
-        ]);
-        setTotalPages(1);
-      });
-  }, [page, apiEndpoint]);
+    setPosts(pagePosts);
+    setTotalPages(Math.ceil(dummyPosts.length / PETITIONS_PER_PAGE));
+  }, [page]);
 
   return (
     <div className="bg-white flex flex-col items-center w-full min-h-screen">
-      <Header centeredLogo />
 
+      {/* 카드 외곽 테두리 박스 */}
       <div className="w-[1336px] mt-10 rounded-[34px] border-2 border-black p-10">
-        <h2 className="text-[28px] font-bold text-center text-gray-700 mb-6">
+        <h2 className="text-[22px] font-semibold text-left text-[#6C6C6C] mb-2">
           Status of Petition Agreement
         </h2>
+        <hr className="border-t border-gray-400 mb-6" />
 
+        {/* 카드 영역 */}
         <div className="grid grid-cols-4 gap-6">
-          {Array.isArray(posts) &&
-            posts.map((post, index) => (
-              <PetitionListCard
-                key={index}
-                title={post.title}
-                summary={post.content}
-                probability={post.percentage}
-              />
-            ))}
+          {posts.map((post, index) => (
+            <PetitionListCard
+              key={index}
+              title={post.title}
+              summary={post.content}
+              probability={post.percentage}
+              department={post.department}
+            />
+          ))}
         </div>
+      </div>
 
-        {totalPages > 1 && (
-          <div className="flex justify-center mt-10 gap-2">
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
+      {/* 페이지네이션 */}
+      {totalPages > 1 && (
+        <div className="flex justify-center mt-6 mb-12 text-gray-600 text-lg items-center">
+          {/* ≪ */}
+          <button onClick={() => setPage(1)} disabled={page === 1} className="hover:text-black px-1">
+            ≪
+          </button>
+          <span className="px-1">│</span>
+
+          {/* ‹ (이전) */}
+          <button onClick={() => setPage((p) => Math.max(p - 1, 1))} disabled={page === 1} className="hover:text-black px-1">
+            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="16" viewBox="0 0 10 16">
+              <path d="M8 2L2 8L8 14" stroke="currentColor" strokeWidth="2" fill="none" />
+            </svg>
+          </button>
+          <span className="px-1">│</span>
+
+          {/* 숫자 페이지 */}
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((n, idx) => (
+            <React.Fragment key={n}>
               <button
-                key={n}
                 onClick={() => setPage(n)}
-                className={`text-lg px-3 py-1 ${
-                  page === n ? "font-bold border-b-2 border-black" : "text-gray-600"
+                className={`px-2 ${
+                  page === n ? "font-bold text-black underline" : "hover:text-black"
                 }`}
               >
                 {n}
               </button>
-            ))}
-          </div>
-        )}
-      </div>
+              {idx !== totalPages - 1 && <span className="px-1">│</span>}
+            </React.Fragment>
+          ))}
+
+          <span className="px-1">│</span>
+
+          {/* › (다음) */}
+          <button
+            onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
+            disabled={page === totalPages}
+            className="hover:text-black px-1"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="16" viewBox="0 0 10 16">
+              <path d="M2 2L8 8L2 14" stroke="currentColor" strokeWidth="2" fill="none" />
+            </svg>
+          </button>
+          <span className="px-1">│</span>
+
+          {/* ≫ */}
+          <button onClick={() => setPage(totalPages)} disabled={page === totalPages} className="hover:text-black px-1">
+            ≫
+          </button>
+        </div>
+      )}
     </div>
   );
 };
 
 export default PetitionList;
+
+
+
+
+//5.19 19:07 피그마 디자인대로 수정 중 아직 확인 X
+//5.19 19:29 색, 크기 조정 중
+//5.19 22:50 페이지 넘길 수 있게
+//5.19 22:55 좀 더 피그마 디자인 그대로 페이지네이션 수정

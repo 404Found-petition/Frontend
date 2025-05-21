@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import x11 from "../assets/LAWGIC.png"; // 로고만 유지
 
-export const Screen = () => {
+export const WithdrawalComplete = () => {
   const navigate = useNavigate();
 
   const goHome = () => {
@@ -42,14 +42,12 @@ export const Screen = () => {
           </div>
         </div>
 
-        {/* 로고 클릭 시 홈으로 이동 */}
-        <img
-          className="absolute w-[199px] h-[66px] top-[19px] left-[35px] object-cover cursor-pointer"
-          alt="Logo"
-          src={x11}
-          onClick={goHome}
-        />
+        
       </div>
     </div>
   );
 };
+
+export default WithdrawalComplete;
+
+//5.17 21:25 컴포넌트 이름 수정 Screen->WithdrawalComplete
