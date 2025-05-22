@@ -1,43 +1,49 @@
-// src/components/CanvasWordcloud.jsx
-import React, { useEffect, useRef, useState, useMemo } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import axios from "axios";
 import WordCloud from "wordcloud";
+import { API_BASE_URL } from "../config";
 
 export default function CanvasWordcloud() {
-  const baseCanvasRef = useRef(null);          // 홈 화면용 canvas
-  const [baseImage, setBaseImage] = useState(null); // 이미지로 저장된 워드클라우드
-  const [hovered, setHovered] = useState(false);
+  const baseCanvasRef = useRef(null); // canvas 참조
+  const [baseImage, setBaseImage] = useState(null); // 팝업용 이미지 저장
+  const [hovered, setHovered] = useState(false);    // 팝업 열기 여부
+  const [words, setWords] = useState([]);           // API 단어 목록
 
-  // ✅ 단어 리스트 (useMemo 사용)
-  const words = useMemo(() => [
-    ["복지", 50],
-    ["경제", 30],
-    ["교육", 25],
-    ["환경", 20],
-    ["교통", 15],
-  ], []);
-
-  // ✅ 랜덤 색상 함수 (녹색 계열)
+  // ✅ 랜덤 녹색 계열 색상
   const getRandomColor = () => {
     const colors = ["#3a6b50", "#5cab7c", "#2d5c4f", "#6ca18f", "#43876f"];
     return colors[Math.floor(Math.random() * colors.length)];
   };
 
-  // ✅ 홈 워드클라우드 렌더링 + 이미지 저장
+  // ✅ API에서 단어 받아오기
   useEffect(() => {
-    if (baseCanvasRef.current) {
+    axios.get(`${API_BASE_URL}/api/wordcloud/`)
+      .then((res) => {
+        const keywordList = res.data.keywords || [];
+        const formatted = keywordList.map(item => [item.word, item.score]);
+        setWords(formatted);
+      })
+      .catch((err) => {
+        console.error("❌ 워드클라우드 데이터 로드 실패:", err);
+      });
+  }, []);
+
+  // ✅ 워드클라우드 생성 + 이미지 저장
+  useEffect(() => {
+    if (baseCanvasRef.current && words.length > 0) {
       WordCloud(baseCanvasRef.current, {
         list: words,
         gridSize: 8,
-        weightFactor: 5,
+        weightFactor: (size) => size * 13, // ✅ 단어 점수 따라 크기 다양화
         fontFamily: "Impact",
         color: getRandomColor,
         backgroundColor: "#ffffff",
-        rotateRatio: 0,
-        drawOutOfBound: false,
-        shrinkToFit: true,
+        rotateRatio: 0.5,              // ✅ 회전 허용
+        rotationSteps: 2,           // ✅ 0도 또는 90도만
+        drawOutOfBound: false,       // ✅ 가장자리까지 퍼지게
+        shrinkToFit: false          // ✅ 원형 방지
       });
-
-      // WordCloud 렌더링 완료 후 이미지 저장
+      // 캔버스를 이미지로 변환해 팝업용으로 저장
       setTimeout(() => {
         const img = baseCanvasRef.current.toDataURL("image/png");
         setBaseImage(img);
@@ -56,12 +62,12 @@ export default function CanvasWordcloud() {
         <canvas ref={baseCanvasRef} width={400} height={400} />
       </div>
 
-      {/* ✅ 팝업: 저장된 이미지로 표시 */}
+      {/* ✅ 팝업: 확대 워드클라우드 이미지 */}
       {hovered && baseImage && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="relative bg-white p-6 rounded shadow-2xl border border-gray-400">
+          <div className="relative p-6 bg-white border border-gray-400 rounded shadow-2xl">
             <button
-              className="absolute top-2 right-2 text-lg font-bold text-gray-600 hover:text-black"
+              className="absolute text-lg font-bold text-gray-600 top-2 right-2 hover:text-black"
               onClick={() => setHovered(false)}
             >
               ✕

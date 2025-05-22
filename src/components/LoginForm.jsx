@@ -1,8 +1,9 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import LoginErrorPopup from "../components/LoginErrorPopup";
+import GoogleLoginButton from "../components/GoogleLoginButton"; // ✅ Google 로그인 버튼
 
-const LoginForm = ({ setLoginFailed, loginFailed }) => {
+const LoginForm = ({ setLoginFailed }) => {
   const navigate = useNavigate();
 
   const handleLogin = (e) => {
@@ -11,21 +12,22 @@ const LoginForm = ({ setLoginFailed, loginFailed }) => {
     const id = e.target[0].value;
     const pw = e.target[1].value;
 
+    // 프론트 테스트용 임시 로그인
     if (id === "test" && pw === "1234") {
-      localStorage.setItem("access", "sample.access.token"); // ✅ 'access' 키
+      localStorage.setItem("access", "sample.access.token");
       localStorage.setItem("refresh", "sample.refresh.token");
       navigate("/");
-      window.location.reload(); // ✅ 상태 새로고침
+      window.location.reload();
     } else {
       setLoginFailed(true);
     }
-  }; // ✅ 함수 여기서 닫아야 함
+  };
 
   return (
     <div className="bg-white w-[1440px] h-[1024px] relative overflow-hidden">
       {/* 로그인 박스 */}
-      <div className="absolute w-[694px] h-[654px] top-[116px] left-[373px] bg-[#f6fff4] border-[3px] border-[#3f7d58] rounded-[18px] shadow">
-        {/* X 닫기 */}
+      <div className="absolute w-[694px] h-[654px] top-[40px] left-[373px] bg-[#f6fff4] border-[3px] border-[#3f7d58] rounded-[18px] shadow">
+        {/* 닫기 버튼 */}
         <div
           className="absolute top-[28px] right-[28px] text-[20px] font-bold text-gray-600 cursor-pointer"
           onClick={() => navigate("/")}
@@ -36,7 +38,7 @@ const LoginForm = ({ setLoginFailed, loginFailed }) => {
         {/* 제목 */}
         <div className="text-[56px] font-bold text-center mt-[115px]">Log In</div>
 
-        {/* 폼 */}
+        {/* 로그인 폼 */}
         <form onSubmit={handleLogin} className="flex flex-col items-center gap-6 mt-[50px]">
           <input
             type="text"
@@ -56,7 +58,7 @@ const LoginForm = ({ setLoginFailed, loginFailed }) => {
           </button>
         </form>
 
-        {/* 회원가입 */}
+        {/* 회원가입 버튼 */}
         <div className="flex justify-center mt-4">
           <button
             className="w-[90px] h-[22px] bg-green-700 text-white text-[11px] rounded-[9px] border border-black"
@@ -65,22 +67,17 @@ const LoginForm = ({ setLoginFailed, loginFailed }) => {
             Sign Up
           </button>
         </div>
-      </div>
 
-      {/* 팝업 */}
-      {loginFailed && (
-        <div className="fixed top-[360px] left-[564px] z-50">
-          <LoginErrorPopup onClose={() => setLoginFailed(false)} />
+        {/* ✅ Google 로그인 버튼 위치 */}
+        <div className="flex justify-center mt-6">
+          <GoogleLoginButton setLoginFailed={setLoginFailed} />
         </div>
-      )}
+      </div>
     </div>
   );
 };
 
 export default LoginForm;
-
-
-
 
 
 // 아이디와 비밀번호 입력 필드를 가진 로그인 폼 렌더링
@@ -95,3 +92,4 @@ export default LoginForm;
 //5.17 15:52 피그마 디자인대로 수정 완, 로고 삭제 나중에 Header.jsx 수정해서 맞추려고
 //5.17 16:59 로그인 실패 안내창 고정되게 하는데 고정이 안됨 왜 안돼
 //5.17 17:02 아 이제 됐다
+//5.21 23:53 google 로그인 버튼 추가

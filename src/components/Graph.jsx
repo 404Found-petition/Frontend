@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { ExpandedBarGraph } from "./ExpandedBarGraph";
+import { API_BASE_URL } from "../config";
 
 // ✅ 시각적으로 격차가 확실히 느껴지도록 바 높이 설정
-const MAX_BAR_HEIGHT = 300;
+const MAX_BAR_HEIGHT = 30; 
 
 const CATEGORY_COLORS = {
   "정치·행정": "#70B7FF",
@@ -10,7 +11,12 @@ const CATEGORY_COLORS = {
   "경제·산업": "#F2B856",
   "교육": "#FFF12B",
   "환경": "#42D583",
-  "기타": "#AAAAAA"
+  "교통·건설": "#F9A3D4",
+  "보건·의료": "#FF5A4E",
+  "문화·예술": "#CBA0FF",
+  "과학·기술": "#33E4FF",
+  "국방·외교": "#538F2D",
+  "기타": "#AAAAAA",
 };
 
 const Graph = () => {
@@ -18,29 +24,25 @@ const Graph = () => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    const mockData = [
-      { category: "정치·행정", count: 100 },
-      { category: "사회", count: 32 },
-      { category: "경제·산업", count: 25 },
-      { category: "교육", count: 20 },
-      { category: "환경", count: 15 },
-    ];
-
-    const processed = mockData.map(item => ({
-      category: item.category,
-      value: item.count,
-      color: CATEGORY_COLORS[item.category] || "#ccc"
-    }));
-
-    setData(processed);
+    fetch(`${API_BASE_URL}/api/statistics/`)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("📊 받아온 API 데이터:", data); // ✅ 추가
+        const processed = data.map(item => ({
+          category: item.분야,
+          value: item.청원수,
+          color: item.색상,
+        }));
+        setData(processed);
+      });
   }, []);
 
   const sortedData = [...data].sort((a, b) => b.value - a.value);
 
   // ✅ scale 제거했으므로 모든 값은 실제 px로 조정
-  const barWidth = 27;          // scale 0.444로 줄였던 실제 크기
+  const barWidth = 40;          // scale 0.444로 줄였던 실제 크기
   const baseLeft = 49;          // base 위치 조정
-  const gap = 40;               // 막대 간 간격
+  const gap = 60;               // 막대 간 간격
 
   return (
     <>

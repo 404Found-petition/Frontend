@@ -1,10 +1,10 @@
 import React from "react";
 
-const MAX_BAR_HEIGHT = 400;
+const MAX_BAR_HEIGHT = 55;
 
 const ExpandedBarGraph = ({ data, onClose }) => {
   const baseLeft = 55;
-  const gap = 70;
+  const gap = 60;
 
   if (!data || data.length === 0) {
     return (
@@ -13,7 +13,7 @@ const ExpandedBarGraph = ({ data, onClose }) => {
           <p className="text-gray-500">데이터를 불러오는 중입니다...</p>
           <button
             onClick={onClose}
-            className="absolute top-2 right-2 text-lg font-bold text-gray-700 hover:text-black"
+            className="absolute text-lg font-bold text-gray-700 top-2 right-2 hover:text-black"
           >
             ×
           </button>
@@ -27,7 +27,7 @@ const ExpandedBarGraph = ({ data, onClose }) => {
       <div className="relative bg-white p-6 rounded shadow-2xl border border-gray-400 w-[700px] h-[550px]">
         <button
           onClick={onClose}
-          className="absolute top-2 right-2 text-lg font-bold text-gray-700 hover:text-black"
+          className="absolute text-lg font-bold text-gray-700 top-2 right-2 hover:text-black"
         >
           ×
         </button>

@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import VoteBox from "./VoteBox";
 import voteIcon from "../assets/vote_Icon.png";
+import axios from "axios";
+import { API_BASE_URL } from "../config";
 
 const PostForm = ({ showVote, setShowVote }) => {
   const navigate = useNavigate();
@@ -9,36 +11,65 @@ const PostForm = ({ showVote, setShowVote }) => {
   const [content, setContent] = useState("");
   const [showAlert, setShowAlert] = useState(false);
 
+  // ✅ 글 작성 처리 함수
   const handleSubmit = async () => {
     if (!title.trim() || !content.trim()) {
-      setShowAlert(true);
+      setShowAlert(true); // 제목/내용 없으면 경고창
       return;
     }
 
     try {
-      console.log("제출됨", { title, content, has_vote: showVote });
-      navigate("/posts");
+      // 🔹 서버에 글 저장 요청 (axios POST)
+      const res = await axios.post(
+        `${API_BASE_URL}/api/posts/create/`,
+        {
+          title: title,
+          content: content,
+          has_poll: showVote, // 백엔드에서 받는 필드 이름에 맞춰야 함!
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access")}`,
+          },
+        }
+      );
+
+      if (res.data.success) {
+        alert("게시글이 성공적으로 등록되었습니다!");
+
+        // 🔸 목록 페이지로 이동하고 새로고침하여 최신 글 표시
+        navigate("/posts");
+        window.location.reload();
+      } else {
+        alert("작성 실패: " + res.data.message);
+      }
     } catch (err) {
-      console.error(err);
+      if (err.response) {
+        console.error("서버 응답 오류:", err.response.status, err.response.data);
+      } else {
+        console.error("요청 자체 실패:", err);
+      }
       alert("게시글 등록 중 오류가 발생했습니다.");
     }
+
   };
 
+  // 🔹 작성 취소 시 목록으로 돌아가기
   const handleCancel = () => {
     navigate("/posts");
   };
 
   return (
-    <div className="absolute w-[1007px] h-[750px] top-[40px] left-[217px] shadow-xl">
-      {/* ✅ ▶ POST 상단 좌측에 배치 */}
+    <div className="absolute w-[1007px] h-[600px] top-[40px] left-[217px] shadow-xl">
+      {/* 상단 ▶ POST 표시 */}
       <div className="text-[#6C6C6C] text-sm font-semibold flex items-center mb-2 ml-1">
         <span className="mr-1">▶</span>
         <span>POST</span>
       </div>
 
+      {/* 글쓰기 폼 영역 */}
       <div className="relative w-full h-full bg-[#f6fff4] p-6 rounded-[10px] border border-[#a3a3a3] flex flex-col justify-between">
-
-        {/* 제목 입력 + 투표 아이콘 버튼 */}
+        {/* 제목 입력 + 투표 추가 버튼 */}
         <div className="flex items-center justify-between mb-4">
           <input
             className="h-[40px] border border-gray-300 rounded-md p-2 w-[calc(100%-48px)]"
@@ -55,15 +86,16 @@ const PostForm = ({ showVote, setShowVote }) => {
           </button>
         </div>
 
-        {/* 내용 입력란 + 투표 박스 포함 */}
-        <div className="w-full border border-gray-300 rounded-md p-4 bg-white flex-1 mb-6 flex flex-col justify-between">
+        {/* 내용 입력 + 투표 박스 */}
+        <div className="w-full border border-gray-300 rounded-md p-4 bg-white mb-4 flex flex-col justify-between flex-grow overflow-hidden">
           <textarea
-            className="w-full h-full resize-none outline-none overflow-y-auto"
+            className="w-full h-[180px] resize-none outline-none overflow-y-auto"
             placeholder="내용 작성"
             value={content}
             onChange={(e) => setContent(e.target.value)}
           />
 
+          {/* 투표 UI 노출 조건 */}
           {showVote && (
             <div className="mt-4">
               <VoteBox />
@@ -71,8 +103,8 @@ const PostForm = ({ showVote, setShowVote }) => {
           )}
         </div>
 
-        {/* 하단 버튼 */}
-        <div className="flex justify-end gap-4">
+        {/* 하단 버튼들 */}
+        <div className="flex justify-end gap-4 mt-2">
           <button
             onClick={handleCancel}
             className="w-[108px] h-[37px] bg-green-700 text-white font-semibold rounded-md border border-black transition"
@@ -87,7 +119,7 @@ const PostForm = ({ showVote, setShowVote }) => {
           </button>
         </div>
 
-        {/* 경고창 */}
+        {/* 제목/내용 누락 시 경고 팝업 */}
         {showAlert && (
           <div className="absolute w-[315px] h-40 top-10 left-1/2 transform -translate-x-1/2 z-50">
             <div className="relative w-full h-full rounded-[6px] bg-[#f6fff4] border border-black">
@@ -112,18 +144,3 @@ const PostForm = ({ showVote, setShowVote }) => {
 };
 
 export default PostForm;
-
-
-
-// 5.12 23:06  3가지 문제 수정(1.제목/내용 데이터 관리 안 됨 2.게시글 작성 내용 백으로 안 넘어감 3.제목or내용 비어있을시 제출 안되도록 해야함)
-// 5.15 1:17  SUBMIT, CANCEL 버튼 이미지로 되어 있던거 수정, 안내문구 X자도 이미지로 되어있던거 수정
-//5.20 12:21 피그마 디자인대로 우선 1차 수정(뭐했다고 벌써 20일)
-//5.20 12:42 투표 이미지 넣었고 누르면 투표 나오고 배경색 바꾸고 버튼 색 바꾸고 에러나올때 에러 나오고 제목 내용란 크기 수정 근데 바탕 전체가 좀 큰거같기도
-//5.21 10:15 투표 아이콘으로만 투표
-//5.21 10:18 제목란 가로 좀 줄임
-//5.21 10:24 투표상자 내용작성란 안으로 넣음
-//5.21 10:33 내용작성란 늘림
-//5.21 10:38 투표 좀 아래로 내림
-//5.21 10:48 투표 아래로 더 내림, 내용 더 많아질 시 스크롤 할 수 
-//5.21 10:58 ▶POST 추가
-//5.21 11:05

@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-import LogoutPopup from "./LogoutPopup"; // ✅ 팝업 컴포넌트
+import LogoutPopup from "./LogoutPopup";
 import "../styles/global.css";
 import logoImage from "../assets/LAWGIC.png";
-
-
 
 const Header = () => {
   const navigate = useNavigate();
@@ -17,7 +15,6 @@ const Header = () => {
   const isLoggedIn =
     !!accessToken && accessToken !== "undefined" && accessToken !== "null";
 
-  // ✅ 프론트 테스트용 로그아웃 처리
   const handleLogout = async () => {
     const isFrontendOnly = true;
 
@@ -29,7 +26,6 @@ const Header = () => {
       return;
     }
 
-    // 🔌 백엔드 연동 시 사용
     try {
       const refreshToken = localStorage.getItem("refresh");
       await axios.post("/api/logout/", { refresh: refreshToken });
@@ -42,17 +38,21 @@ const Header = () => {
     }
   };
 
+  // 🔹 로그인/로그아웃 버튼을 숨길 페이지들
   const hideLoginControls = ["/login", "/signup", "/success"].includes(location.pathname);
 
-  const isCompactPage = [
-    "/login", "/signup", "/success",
-    "/posts", "/petitionlist", "/petitions/history", "/posts/:id", "/user", "/posts/create","/edit-user","/withdraw", "/withdrawal-complete"
-  ].includes(location.pathname);
+  // 🔹 UserPage/게시글상세 등 compact 헤더를 쓸 페이지
+  const isCompactPage =
+    [
+      "/login", "/signup", "/success",
+      "/posts", "/petitionlist", "/petitions/history",
+      "/user", "/posts/create", "/edit-user", "/withdraw", "/withdrawal-complete"
+    ].includes(location.pathname) ||
+    location.pathname.startsWith("/posts/");  // ✅ PostDetail도 포함됨
 
   const logoClass = isCompactPage
-  ? "absolute top-[-45px] left-[40px] h-[240px] w-auto"
-  : "absolute top-[20px] left-[120px] h-[240px] w-auto"; //홈화면
-
+    ? "absolute top-[-45px] left-[40px] h-[240px] w-auto"
+    : "absolute top-[20px] left-[120px] h-[240px] w-auto";
 
   const buttonPositionClass = isCompactPage
     ? "absolute top-[40px] right-[80px]"
@@ -67,12 +67,6 @@ const Header = () => {
         className={`${logoClass} object-contain cursor-pointer`}
         onClick={() => navigate("/")}
       />
-
-
-      {/*<div
-            className={`${logoClass} bg-lawgic-logo bg-contain bg-no-repeat bg-left cursor-pointer`}
-            onClick={() => navigate("/")}
-        />*/}
 
       {/* 🔹 로그인/로그아웃 버튼 */}
       {!hideLoginControls && (
@@ -111,7 +105,6 @@ const Header = () => {
 };
 
 export default Header;
-
 
 //5.20 20:32 로그인하면 로그인 자리에 프로필 사진 로그아웃 뜨도록
 //5.20 21:06 프로필 사진 누르면 유저 페이지 이동, 로그아웃 되도록

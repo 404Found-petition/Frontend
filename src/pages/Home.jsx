@@ -10,22 +10,23 @@ import Wordcloud from "../components/Wordcloud";
 import HomePostCard from "../components/HomePostCard";
 import { PetitionCard } from "../components/PetitionCard";
 
+// ✅ 샘플 게시글: id 추가
 const samplePosts = [
-  { username: "User_ID", date: "2025.03.31", preview: "청원 명이나 게시글 제목 어쩌고저쩌고" },
-  { username: "User_ID", date: "2025.03.30", preview: "청원 명이나 게시글 제목 어쩌고저쩌고" },
-  { username: "User_ID", date: "2025.03.29", preview: "청원 명이나 게시글 제목 어쩌고저쩌고" },
-  { username: "User_ID", date: "2025.03.28", preview: "청원 명이나 게시글 제목 어쩌고저쩌고" },
-  { username: "User_ID", date: "2025.03.27", preview: "청원 명이나 게시글 제목 어쩌고저쩌고" },
-  { username: "User_ID", date: "2025.03.26", preview: "청원 명이나 게시글 제목 어쩌고저쩌고" },
+  { id: 1, username: "User_ID", date: "2025.03.31", preview: "주택 정책 개정 필요성에 대해 논의합니다." },
+  { id: 2, username: "User_ID", date: "2025.03.30", preview: "전기차 충전소 확대 청원이 필요합니다." },
+  { id: 3, username: "User_ID", date: "2025.03.29", preview: "교통안전 강화를 위한 법 개정 청원입니다." },
+  { id: 4, username: "User_ID", date: "2025.03.28", preview: "환경 보호를 위한 일회용품 규제 청원입니다." },
+  { id: 5, username: "User_ID", date: "2025.03.27", preview: "교육 현장의 변화에 대한 개선 청원입니다." },
+  { id: 6, username: "User_ID", date: "2025.03.26", preview: "의료보험 보장성 확대에 대한 국민 청원입니다." },
 ];
 
 const samplePetitions = [
   { title: "보건복지부", summary: "의료 관련 법률 개정을 제안합니다.", probability: 75 },
-  { title: "보건복지부", summary: "의료 관련 법률 개정을 제안합니다.", probability: 75 },
-  { title: "보건복지부", summary: "의료 관련 법률 개정을 제안합니다.", probability: 75 },
-  { title: "보건복지부", summary: "의료 관련 법률 개정을 제안합니다.", probability: 75 },
-  { title: "보건복지부", summary: "의료 관련 법률 개정을 제안합니다.", probability: 75 },
-  { title: "보건복지부", summary: "의료 관련 법률 개정을 제안합니다.", probability: 75 },
+  { title: "교육부", summary: "교육 지원 확대 청원을 제안합니다.", probability: 63 },
+  { title: "국토교통부", summary: "교통 정책 개선에 관한 청원입니다.", probability: 80 },
+  { title: "환경부", summary: "플라스틱 규제 관련 법안 제안 청원입니다.", probability: 69 },
+  { title: "산업통상자원부", summary: "전력 수급 계획 관련 청원입니다.", probability: 72 },
+  { title: "고용노동부", summary: "근로 환경 개선 관련 청원입니다.", probability: 58 },
 ];
 
 const Home = () => {
@@ -74,13 +75,13 @@ const Home = () => {
           {/* ✅ 청원이란? 소개 팝업 */}
           {showIntro && (
             <>
-              <div className="fixed inset-0 bg-black bg-opacity-30 z-40 pointer-events-auto" />
+              <div className="fixed inset-0 z-40 bg-black pointer-events-auto bg-opacity-30" />
               <div
                 className={`fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
-        w-[90vw] max-w-[1000px] z-50 bg-white border-2 border-gray-50 
-        rounded-2xl p-10 shadow-xl 
-        transition-opacity ${fastClose ? "duration-[1ms]" : "duration-500"} ease-in-out
-        ${fadeOut ? "opacity-0" : "opacity-100"}`}
+                w-[90vw] max-w-[1000px] z-50 bg-white border-2 border-gray-50 
+                rounded-2xl p-10 shadow-xl 
+                transition-opacity ${fastClose ? "duration-[1ms]" : "duration-500"} ease-in-out
+                ${fadeOut ? "opacity-0" : "opacity-100"}`}
               >
                 <h2 className="text-center text-[32px] font-bold text-[#3F7D58] mb-6">
                   청원이란?
@@ -92,7 +93,7 @@ const Home = () => {
                   "국가는 청원에 대하여 심사할 의무를 진다"고 규정함으로써 국민의 청원권을 보장하고 있습니다.
                 </p>
 
-                <p className="text-center leading-relaxed">
+                <p className="leading-relaxed text-center">
                   <span className="block text-[19px] font-bold text-[#3F7D58] mb-2">청원사항</span>
                   <span className="text-[16px] text-gray-700">
                     피해의 구제, 공무원의 위법･부당한 행위에 대한 시정이나 징계의 요구, <br />
@@ -109,12 +110,12 @@ const Home = () => {
             <SearchBar onSearchResult={(result) => setPrediction(result)} />
           </div>
 
-          {/* 🪑 좌석 배치도 + 퍼센트 게이지 */}
+          {/* 좌석 배치도 + 퍼센트 게이지 */}
           <div style={{ position: "relative" }}>
             <SeatChartStatus targetPercentage={percent} />
           </div>
 
-          {/* 📊 그래프 + 워드클라우드 + 카드 */}
+          {/* 그래프 + 워드클라우드 + 카드 */}
           <div className="flex flex-row items-start justify-center gap-8 mt-12" style={{ marginTop: -20 }}>
             <div className="flex flex-col gap-10">
               <div className="flex flex-row gap-[10px]">
@@ -128,8 +129,8 @@ const Home = () => {
                   <button onClick={() => navigate("/posts")} className="text-[30px] font-semibold cursor-pointer">...</button>
                 </div>
                 <div className="flex flex-col space-y-6">
-                  {samplePosts.map((post, idx) => (
-                    <HomePostCard key={idx} {...post} />
+                  {samplePosts.map((post) => (
+                    <HomePostCard key={post.id} {...post} />
                   ))}
                 </div>
               </div>
@@ -137,8 +138,13 @@ const Home = () => {
 
             <div className="w-[350px] rounded-[33px] border border-[#a1a1a1] px-6 py-6 relative">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-[22px] font-bold text-[#6b6b6b] tracking-widest">청원 동의 현황</h2>
-                <button onClick={() => navigate("/petitionlist")} className="text-[25px] font-semibold cursor-pointer">...</button>
+                <h2 className="text-[40px] font-bold text-[#6C6C6C] text-center w-full mt-4">청원 동의 현황</h2>
+                <button
+                  onClick={() => navigate("/petitionlist")}
+                  className="absolute right-6 top-2 text-[24px] font-semibold cursor-pointer"
+                >
+                  ...
+                </button>
               </div>
               <div className="flex flex-col space-y-4">
                 {samplePetitions.map((petition, i) => (
@@ -149,8 +155,14 @@ const Home = () => {
           </div>
         </div>
       </div>
+
+      {/* 여유 여백 */}
+      <div className="h-[100px]" />
     </div>
   );
 };
 
 export default Home;
+
+
+//05.21 22:10 하단부 여백 추가
