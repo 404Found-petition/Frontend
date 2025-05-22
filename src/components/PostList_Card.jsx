@@ -3,24 +3,27 @@ import React from "react";
 const PostListCard = ({ title, content, authorId, date, onClick }) => {
   return (
     <div
-      className="w-[629px] h-[343px] rounded-[20.46px] overflow-hidden border-[2.64px] border-solid border-[#5cab7c] relative cursor-pointer"
       onClick={onClick}
+      className="w-[629px] h-[343px] border-[2.64px] border-[#5cab7c] rounded-[20px] p-6 relative cursor-pointer overflow-hidden"
     >
-      <div className="absolute w-[497px] h-[98px] top-[19px] left-[27px]">
-        <p className="w-[416px] top-[43px] left-[76px] absolute font-normal text-black text-[14.9px] leading-[normal]">
-          {content || "내용 없음"}
-        </p>
-        <div className="w-[226px] top-0 left-[76px] absolute font-normal text-black text-[21.5px]">
-          {title || "제목 없음"}
-        </div>
-        <div className="absolute top-14 left-0 text-black text-[12.4px]">
-          {authorId || "작성자 없음"}
-        </div>
-        <div className="w-[47px] h-[47px] rounded-[23.58px] border absolute top-0 left-0 bg-[#93e1b3] border-black" />
+      {/* 상단: 작성자 + 아이콘 */}
+      <div className="flex items-center gap-2 mb-2">
+        <div className="w-[47px] h-[47px] bg-[#93e1b3] border border-black rounded-full" />
+        <div className="text-[12.4px] text-black">{authorId || "익명"}</div>
+        <div className="ml-auto text-[10.6px] text-[#6b6b6b]">{date || "날짜 없음"}</div>
       </div>
 
-      <div className="absolute w-[77px] top-3 left-[554px] text-[10.6px] text-[#6b6b6b]">
-        {date || "날짜 없음"}
+      {/* 제목 */}
+      <div className="text-[21.5px] font-bold text-black mb-2">{title || "제목 없음"}</div>
+
+      {/* 본문 내용: truncate */}
+      <div className="w-full">
+        <p
+          className="truncate w-full text-[14.9px] text-black leading-normal"
+          title={content}
+        >
+          {content || "내용 없음"}
+        </p>
       </div>
     </div>
   );

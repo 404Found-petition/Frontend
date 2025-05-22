@@ -20,14 +20,6 @@ const samplePosts = [
   { id: 6, username: "User_ID", date: "2025.03.26", preview: "의료보험 보장성 확대에 대한 국민 청원입니다." },
 ];
 
-const samplePetitions = [
-  { title: "보건복지부", summary: "의료 관련 법률 개정을 제안합니다.", probability: 75 },
-  { title: "교육부", summary: "교육 지원 확대 청원을 제안합니다.", probability: 63 },
-  { title: "국토교통부", summary: "교통 정책 개선에 관한 청원입니다.", probability: 80 },
-  { title: "환경부", summary: "플라스틱 규제 관련 법안 제안 청원입니다.", probability: 69 },
-  { title: "산업통상자원부", summary: "전력 수급 계획 관련 청원입니다.", probability: 72 },
-  { title: "고용노동부", summary: "근로 환경 개선 관련 청원입니다.", probability: 58 },
-];
 
 const Home = () => {
   const navigate = useNavigate();
@@ -35,6 +27,24 @@ const Home = () => {
   const [fadeOut, setFadeOut] = useState(false);
   const [showIntro, setShowIntro] = useState(false);
   const [fastClose, setFastClose] = useState(false);
+
+  const [petitionData, setPetitionData] = useState([]); // 청원예측현황 부분
+  useEffect(() => {
+    fetch("http://localhost:8000/api/predictions/")
+      .then((res) => res.json())
+      .then((data) => {
+        const sorted = [...data]
+          .sort((a, b) => a.id - b.id) // 최신순
+          .slice(0, 6) // 최신 6개만
+          .map((item) => ({
+            title: item.petition_title,
+            summary: item.petition_content, // 사용 안하지만 혹시 모르니 유지
+            probability: parseFloat(item.prediction_percentage.toFixed(1)),
+          }));
+        setPetitionData(sorted);
+      })
+      .catch((err) => console.error("❌ 예측 데이터 로딩 실패:", err));
+  }, []);
 
   // ✅ intro 팝업 제어
   useEffect(() => {
@@ -63,9 +73,8 @@ const Home = () => {
 
   // ✅ 확률 게이지용 안전 처리
   let percent = 0;
-  if (prediction && typeof prediction.probability === "number") {
-    const calc = Math.round(prediction.probability * 100);
-    percent = isNaN(calc) ? 0 : calc;
+  if (prediction && typeof prediction.predicted_percentage === "number") {
+    percent = Math.round(prediction.predicted_percentage);
   }
 
   return (
@@ -147,8 +156,13 @@ const Home = () => {
                 </button>
               </div>
               <div className="flex flex-col space-y-4">
-                {samplePetitions.map((petition, i) => (
-                  <PetitionCard key={i} {...petition} />
+                {petitionData.map((petition, i) => (
+                  <PetitionCard
+                    key={i}
+                    title={""}// 숨기기용 빈 문자열 전달
+                    summary={petition.title}
+                    probability={petition.probability}
+                  />
                 ))}
               </div>
             </div>

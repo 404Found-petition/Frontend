@@ -91,7 +91,7 @@ export default SeatChartStatus;
 
 // SeatChartStatus.jsx
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../api/axiosInstance";
 import Seat from "../components/Seat";
 import { Tooltip } from "../components/Tooltip";
 import { API_BASE_URL } from "../config"; // 예: http://localhost:8000
@@ -120,24 +120,29 @@ const SeatChartStatus = ({ targetPercentage }) => {
   const [lawmembers, setLawmembers] = useState([]);
 
   useEffect(() => {
-    axios
+    api
       .get(`${API_BASE_URL}/api/lawmembers/`)
       .then((res) => setLawmembers(res.data))
       .catch((err) => console.error(err));
   }, []);
 
   useEffect(() => {
+    if (typeof targetPercentage !== "number") return;
+
     let current = 0;
-    const step = targetPercentage / 30;
+    const final = Math.max(0, targetPercentage); // 혹시 모를 음수 방지
+    const step = final > 0 ? final / 30 : 1; // ✅ 0일 때도 한 번은 업데이트 되도록 step 최소 1
+
     const interval = setInterval(() => {
-      current += step;
-      if (current >= targetPercentage) {
-        setPercentage(targetPercentage);
+      if (current >= final) {
+        setPercentage(final);
         clearInterval(interval);
       } else {
-        setPercentage(Math.floor(current));
+        current += step;
+        setPercentage(Math.min(Math.floor(current), final));
       }
     }, 30);
+
     return () => clearInterval(interval);
   }, [targetPercentage]);
 

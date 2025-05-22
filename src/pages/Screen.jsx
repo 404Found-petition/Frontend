@@ -1,7 +1,7 @@
 // 의원 좌석 배치 화면 (Screen.jsx)
 
 import React, { useEffect, useState } from "react";
-import axios from "axios"; // axios를 사용해 API 요청
+import api from '../api/axiosInstance'; // axios를 사용해 API 요청
 import SERVER_IP from "../config"; // 백엔드 API 주소 중앙 관리용
 import SeatChartStatus from "../components/SeatChartStatus"; // 퍼센트와 좌석 표시 컴포넌트
 import Seat from "../components/Seat"; // 개별 좌석 컴포넌트 (여기선 직접 사용 X)
@@ -69,7 +69,7 @@ const Screen = () => {
   // 페이지 로드시 한번 실행되는 데이터 요청
   useEffect(() => {
     // 1. 국회의원 정보 불러오기
-    axios.get(`${SERVER_IP}/api/lawmembers/`)
+    api.get(`${SERVER_IP}/api/lawmembers/`)
       .then((res) => setLawmembers(res.data)) // 성공 시 데이터 저장
       .catch((err) => {
         console.error("의원 데이터 오류", err);
@@ -77,7 +77,7 @@ const Screen = () => {
       });
 
     // 2. 최신 청원 예측 확률 불러오기
-    axios.get(`${SERVER_IP}/api/predict-latest/`)
+    api.get(`${SERVER_IP}/api/predict-latest/`)
       .then((res) => {
         const p = res.data?.probability;
         if (typeof p === "number") setPetitionProb(Math.round(p * 100)); // 소수 → 백분율

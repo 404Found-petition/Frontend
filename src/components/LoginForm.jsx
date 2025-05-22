@@ -1,25 +1,38 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../api/axiosInstance";
+import { API_BASE_URL } from "../config";
 import LoginErrorPopup from "../components/LoginErrorPopup";
 import GoogleLoginButton from "../components/GoogleLoginButton"; // ✅ Google 로그인 버튼
 
 const LoginForm = ({ setLoginFailed }) => {
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
     const id = e.target[0].value;
     const pw = e.target[1].value;
 
-    // 프론트 테스트용 임시 로그인
-    if (id === "test" && pw === "1234") {
-      localStorage.setItem("access", "sample.access.token");
-      localStorage.setItem("refresh", "sample.refresh.token");
+    try {
+      const response = await api.post(`${API_BASE_URL}/api/login/`, {
+        userid: id,
+        password: pw,
+      });
+
+      const { access, refresh, userid } = response.data;
+
+      // ✅ 토큰 저장
+      localStorage.setItem("access", access);
+      localStorage.setItem("refresh", refresh);
+      localStorage.setItem("userid", userid); // ✅ 사용자 ID 저장 (삭제 버튼용)
+
+      // ✅ 홈으로 이동
       navigate("/");
       window.location.reload();
-    } else {
-      setLoginFailed(true);
+    } catch (error) {
+      console.error("로그인 실패:", error.response?.data || error.message);
+      setLoginFailed(true); // 로그인 실패 시 팝업 표시
     }
   };
 
@@ -68,7 +81,7 @@ const LoginForm = ({ setLoginFailed }) => {
           </button>
         </div>
 
-        {/* ✅ Google 로그인 버튼 위치 */}
+        {/* ✅ Google 로그인 버튼 */}
         <div className="flex justify-center mt-6">
           <GoogleLoginButton setLoginFailed={setLoginFailed} />
         </div>
@@ -78,7 +91,6 @@ const LoginForm = ({ setLoginFailed }) => {
 };
 
 export default LoginForm;
-
 
 // 아이디와 비밀번호 입력 필드를 가진 로그인 폼 렌더링
 // 로그인 버튼 클릭 시 handleLogin 실행
@@ -93,3 +105,5 @@ export default LoginForm;
 //5.17 16:59 로그인 실패 안내창 고정되게 하는데 고정이 안됨 왜 안돼
 //5.17 17:02 아 이제 됐다
 //5.21 23:53 google 로그인 버튼 추가
+//5.22 19:59 로그인 백과 연동 중...
+//5.23 20:05 ✅ 로그인 시 userid localStorage에 저장 추가

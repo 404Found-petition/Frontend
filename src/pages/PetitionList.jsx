@@ -8,34 +8,37 @@ const PetitionList = () => {
 
   const PETITIONS_PER_PAGE = 24;
 
-  // ✅ 더미 데이터 30개
-  const dummyPosts = Array.from({ length: 30 }, (_, i) => ({
-    department: ["보건복지부", "교육부", "환경부", "국토교통부", "산업통상자원부", "문화체육관광부"][i % 6],
-    title: `청원 제목 ${i + 1}`,
-    content: `이것은 ${i + 1}번째 청원의 요약입니다.`,
-    percentage: 50 + (i % 50),
-  }));
-
   useEffect(() => {
-    const start = (page - 1) * PETITIONS_PER_PAGE;
-    const end = start + PETITIONS_PER_PAGE;
-    const pagePosts = dummyPosts.slice(start, end);
+    fetch("http://localhost:8000/api/predictions/")
+      .then((res) => res.json())
+      .then((data) => {
+        const converted = data.map((item) => ({
+          department: item.petition_title.slice(0, 6), // 부서명 없으니 제목 일부로 대체
+          title: item.petition_title,
+          content: item.petition_content,
+          percentage: parseFloat(item.prediction_percentage.toFixed(1)),
+        }));
 
-    setPosts(pagePosts);
-    setTotalPages(Math.ceil(dummyPosts.length / PETITIONS_PER_PAGE));
+        const start = (page - 1) * PETITIONS_PER_PAGE;
+        const end = start + PETITIONS_PER_PAGE;
+        setPosts(converted.slice(start, end));
+        setTotalPages(Math.ceil(converted.length / PETITIONS_PER_PAGE));
+      })
+      .catch((err) => {
+        console.error("❌ 예측 데이터 불러오기 실패:", err);
+      });
   }, [page]);
 
   return (
-    <div className="bg-white flex flex-col items-center w-full min-h-screen">
-
-      {/* 카드 외곽 테두리 박스 */}
+    <div className="flex flex-col items-center w-full min-h-screen bg-white">
+      {/* 카드 박스 */}
       <div className="w-[1336px] mt-10 rounded-[34px] border-2 border-black p-10">
         <h2 className="text-[22px] font-semibold text-left text-[#6C6C6C] mb-2">
           Status of Petition Agreement
         </h2>
-        <hr className="border-t border-gray-400 mb-6" />
+        <hr className="mb-6 border-t border-gray-400" />
 
-        {/* 카드 영역 */}
+        {/* 카드 리스트 */}
         <div className="grid grid-cols-4 gap-6">
           {posts.map((post, index) => (
             <PetitionListCard
@@ -49,68 +52,58 @@ const PetitionList = () => {
         </div>
       </div>
 
-      {/* 페이지네이션 */}
+      {/* ✅ 새 페이지네이션 (10개 단위 그룹) */}
       {totalPages > 1 && (
-        <div className="flex justify-center mt-6 mb-12 text-gray-600 text-lg items-center">
-          {/* ≪ */}
-          <button onClick={() => setPage(1)} disabled={page === 1} className="hover:text-black px-1">
-            ≪
-          </button>
-          <span className="px-1">│</span>
+        <div className="flex justify-center gap-2 mt-10 mb-12">
+          {(() => {
+            const PAGE_GROUP_SIZE = 10;
+            const currentGroup = Math.floor((page - 1) / PAGE_GROUP_SIZE);
+            const startPage = currentGroup * PAGE_GROUP_SIZE + 1;
+            const endPage = Math.min(startPage + PAGE_GROUP_SIZE - 1, totalPages);
 
-          {/* ‹ (이전) */}
-          <button onClick={() => setPage((p) => Math.max(p - 1, 1))} disabled={page === 1} className="hover:text-black px-1">
-            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="16" viewBox="0 0 10 16">
-              <path d="M8 2L2 8L8 14" stroke="currentColor" strokeWidth="2" fill="none" />
-            </svg>
-          </button>
-          <span className="px-1">│</span>
+            return (
+              <>
+                {/* 이전 그룹 이동 */}
+                {startPage > 1 && (
+                  <button
+                    onClick={() => setPage(startPage - 1)}
+                    className="px-3 py-1 border-[1.5px] border-black rounded bg-white text-gray-700 font-semibold hover:bg-gray-100"
+                  >
+                    &lt;
+                  </button>
+                )}
 
-          {/* 숫자 페이지 */}
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((n, idx) => (
-            <React.Fragment key={n}>
-              <button
-                onClick={() => setPage(n)}
-                className={`px-2 ${
-                  page === n ? "font-bold text-black underline" : "hover:text-black"
-                }`}
-              >
-                {n}
-              </button>
-              {idx !== totalPages - 1 && <span className="px-1">│</span>}
-            </React.Fragment>
-          ))}
+                {/* 현재 그룹 페이지 버튼 */}
+                {Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i).map((n) => (
+                  <button
+                    key={n}
+                    onClick={() => setPage(n)}
+                    className={`px-4 py-2 border-[1.5px] rounded font-semibold ${page === n
+                        ? "bg-green-700 text-white"
+                        : "bg-white text-black hover:bg-gray-100"
+                      }`}
+                  >
+                    {n}
+                  </button>
+                ))}
 
-          <span className="px-1">│</span>
-
-          {/* › (다음) */}
-          <button
-            onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
-            disabled={page === totalPages}
-            className="hover:text-black px-1"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="16" viewBox="0 0 10 16">
-              <path d="M2 2L8 8L2 14" stroke="currentColor" strokeWidth="2" fill="none" />
-            </svg>
-          </button>
-          <span className="px-1">│</span>
-
-          {/* ≫ */}
-          <button onClick={() => setPage(totalPages)} disabled={page === totalPages} className="hover:text-black px-1">
-            ≫
-          </button>
+                {/* 다음 그룹 이동 */}
+                {endPage < totalPages && (
+                  <button
+                    onClick={() => setPage(endPage + 1)}
+                    className="px-3 py-1 border-[1.5px] border-black rounded bg-white text-gray-700 font-semibold hover:bg-gray-100"
+                  >
+                    &gt;
+                  </button>
+                )}
+              </>
+            );
+          })()}
         </div>
       )}
+
     </div>
   );
 };
 
 export default PetitionList;
-
-
-
-
-//5.19 19:07 피그마 디자인대로 수정 중 아직 확인 X
-//5.19 19:29 색, 크기 조정 중
-//5.19 22:50 페이지 넘길 수 있게
-//5.19 22:55 좀 더 피그마 디자인 그대로 페이지네이션 수정

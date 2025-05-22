@@ -18,7 +18,7 @@ export const PetitionStatus = () => {
   ];
 
   return (
-    <div className="flex flex-col gap-6 items-center p-4">
+    <div className="flex flex-col items-center gap-6 p-4">
       <h2 className="text-xl font-bold">청원 동의 현황</h2>
       {petitionList.map((p) => (
         <PetitionCard

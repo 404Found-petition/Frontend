@@ -43,17 +43,24 @@ const Login = () => {
           <LoginErrorPopup onClose={() => setLoginFailed(false)} />
         </div>
       )}
+
+      {/* Google 로그인 핸들링 */}
+      <GoogleLogin
+        onSuccess={handleGoogleLoginSuccess}
+        onError={() => {
+          console.log("Google 로그인 실패");
+          setLoginFailed(true);
+        }}
+      />
     </div>
   );
 };
 
 export default Login;
 
-
-
 // 로그인 실패 여부를 상태로 관리 (loginFailed)
 // 로그인 성공/실패 여부는 LoginForm에서 결정
 
 //5.15 21:55 검은 배경 반투명 오버레이 삭제, 로그인 실패시 그냥 에러 팝업창만 뜨도록 설정
 //5.15 22:19 로그인 에러창 뜨는 위치 고정
-//
+//5.23 20:05 ✅ Google 로그인 시 userid localStorage에 저장 추가   뭐야 이거?

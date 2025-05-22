@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../api/axiosInstance";
+import { API_BASE_URL } from "../config";
 
 export const EditUserInfo = () => {
   const navigate = useNavigate();
@@ -11,39 +13,58 @@ export const EditUserInfo = () => {
   const [rePassword, setRePassword] = useState("");
   const [phone, setPhone] = useState("");
 
-  // 초기 데이터 불러오기 (백엔드 연동 전 mock)
+  // ✅ 유저 정보 로드 (GET /api/user/)
   useEffect(() => {
-    const mockUserData = {
-      userId: "lawgic123",
-      name: "김땡땡",
-      phone: "010-1234-5678",
-    };
-
-    setUserId(mockUserData.userId);
-    setName(mockUserData.name);
-    setPhone(mockUserData.phone);
+    const token = localStorage.getItem("access");
+    api
+      .get(`${API_BASE_URL}/api/user/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => {
+        setUserId(res.data.userid);
+        setName(res.data.name);
+        setPhone(res.data.phone_num);
+      })
+      .catch((err) => {
+        console.error("❌ 사용자 정보 로딩 실패:", err);
+      });
   }, []);
 
-  const handleSubmit = () => {
+  // ✅ 수정 요청 (PUT /api/update-user/)
+  const handleSubmit = async () => {
     if (password !== rePassword) {
       alert("비밀번호가 일치하지 않습니다.");
       return;
     }
 
-    console.log("수정된 정보:", {
-      userId,
-      name,
-      password,
-      phone,
-    });
+    const token = localStorage.getItem("access");
 
-    // ✅ 알림 후 유저페이지로 이동
-    alert("회원정보가 수정되었습니다.");
-    navigate("/user");
+    try {
+      await api.put(
+        `${API_BASE_URL}/api/update-user/`,
+        {
+          name,
+          phone_num: phone,
+          password,
+          password_confirm: rePassword,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      alert("회원정보가 수정되었습니다.");
+      navigate("/user");
+    } catch (error) {
+      console.error("❌ 회원정보 수정 실패:", error);
+      alert("수정에 실패했습니다. 다시 시도해주세요.");
+    }
   };
 
   return (
-    <div className="bg-white flex flex-row justify-center w-full">
+    <div className="flex flex-row justify-center w-full bg-white">
       <div className="bg-white w-[1440px] h-[1024px] relative">
         <div className="absolute w-[750px] h-[706px] top-[116px] left-[345px] bg-[#f6fff4] rounded-[16.3px] border-[2.93px] border-solid border-[#3f7d58] shadow-[0px_1.3px_1.3px_#00000040]">
           {/* X 버튼 */}
@@ -140,4 +161,5 @@ export default EditUserInfo;
 
 //5.21 2:58 입력할 수 있도록 수정
 //5.21 3:03 비밀번호를 제외한 기본 정보는 입력되어있도록 설정
-//5.21 3:09 회원정보가 수정되었습니다 뜨고 유저페이지로 이동동
+//5.21 3:09 회원정보가 수정되었습니다 뜨고 유저페이지로 이동
+//5.22 22:36 백과 연동

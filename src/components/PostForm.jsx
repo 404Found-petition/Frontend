@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import VoteBox from "./VoteBox";
 import voteIcon from "../assets/vote_Icon.png";
-import axios from "axios";
+import api from "../api/axiosInstance";
 import { API_BASE_URL } from "../config";
 
 const PostForm = ({ showVote, setShowVote }) => {
@@ -20,7 +20,7 @@ const PostForm = ({ showVote, setShowVote }) => {
 
     try {
       // 🔹 서버에 글 저장 요청 (axios POST)
-      const res = await axios.post(
+      const res = await api.post(
         `${API_BASE_URL}/api/posts/create/`,
         {
           title: title,
@@ -87,7 +87,7 @@ const PostForm = ({ showVote, setShowVote }) => {
         </div>
 
         {/* 내용 입력 + 투표 박스 */}
-        <div className="w-full border border-gray-300 rounded-md p-4 bg-white mb-4 flex flex-col justify-between flex-grow overflow-hidden">
+        <div className="flex flex-col justify-between flex-grow w-full p-4 mb-4 overflow-hidden bg-white border border-gray-300 rounded-md">
           <textarea
             className="w-full h-[180px] resize-none outline-none overflow-y-auto"
             placeholder="내용 작성"

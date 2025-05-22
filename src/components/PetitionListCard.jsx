@@ -1,7 +1,17 @@
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 
-const PetitionListCard = ({ title, summary, probability, department }) => {
-  // 제목 줄바꿈 로직 (띄어쓰기 제외 10글자 기준)
+const PetitionListCard = ({ title, summary, probability }) => {
+  const [showSummary, setShowSummary] = useState(false);
+  const scrollRef = useRef(null); // 🔍 스크롤 영역 DOM 접근
+
+  // ✅ 요약/제목 전환 시 스크롤 맨 위로
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = 0;
+    }
+  }, [showSummary]);
+
+  // 제목 줄바꿈
   const splitTitleByLength = (title) => {
     const words = title.split(" ");
     let line1 = "";
@@ -24,58 +34,64 @@ const PetitionListCard = ({ title, summary, probability, department }) => {
   const [line1, line2] = splitTitleByLength(title);
 
   return (
-    <div className="w-[300px] h-[300px] bg-[#E3F8EB] rounded-[12px] p-4 border-[2px] border-black shadow-sm flex flex-col">
-      {/* 부서명 */}
-      <div className="text-[11.08px] text-left text-gray-700">{department}</div>
+    <div className="relative w-[300px] h-[300px] bg-[#E3F8EB] rounded-[12px] p-4 border-[2px] border-black shadow-sm overflow-hidden">
+      {/* ✅ 전환 버튼 */}
+      <button
+        onClick={() => setShowSummary((prev) => !prev)}
+        className="text-[13px] font-semibold px-3 py-1 border-[1.5px] border-black rounded-md bg-white shadow-sm"
+      >
+        {showSummary ? "title" : "summary"}
+      </button>
 
-      {/* 제목 + 내용 + 퍼센트바 그룹 */}
-      <div className="flex flex-col items-center justify-center flex-1 scale-[1.3] origin-center">
-        {/* 제목 */}
-        <div className="text-center mt-2 font-bold leading-tight text-[19.95px] text-[#000000]">
-          {line1}
-          <br />
-          {line2}
-        </div>
+      {/* ✅ 제목/내용 영역 (스크롤 영역 + ref 연결) */}
+      <div
+        ref={scrollRef}
+        className="absolute top-[50px] bottom-[80px] left-4 right-4 overflow-auto flex items-start justify-center text-center"
+      >
+        {showSummary ? (
+          <p className="text-[15px] font-semibold text-gray-700 whitespace-pre-line">
+            {summary}
+          </p>
+        ) : (
+          <div className="text-[22px] font-bold text-black leading-[1.6]">
+            {line1}
+            <br />
+            {line2}
+          </div>
+        )}
+      </div>
 
-        {/* 요약 */}
-        <div className="text-center mt-2 text-[12.68px] text-gray-700">
-          {summary}
-        </div>
-
-        {/* 퍼센트 원형 바 */}
-        <div className="flex justify-center items-center mt-4">
-          <div className="relative w-16 h-16">
-            <svg className="absolute top-0 left-0 w-16 h-16">
-              {/* 바깥 검정 외곽선 */}
-              <circle
-                cx="32"
-                cy="32"
-                r="25"
-                stroke="black"
-                strokeWidth="6"
-                fill="none"
-                strokeDasharray="157"
-                strokeDashoffset={`${157 - (157 * probability) / 100}`}
-                strokeLinecap="butt"
-                transform="rotate(-90 32 32)"
-              />
-              {/* 초록 퍼센트 바 (두께 + 외곽선 효과) */}
-              <circle
-                cx="32"
-                cy="32"
-                r="25"
-                stroke="#5CAB7C"
-                strokeWidth="5"
-                fill="none"
-                strokeDasharray="157"
-                strokeDashoffset={`${157 - (157 * probability) / 100}`}
-                strokeLinecap="butt"
-                transform="rotate(-90 32 32)"
-              />
-            </svg>
-            <div className="absolute inset-0 flex items-center justify-center text-sm font-semibold text-black">
-              {probability}%
-            </div>
+      {/* ✅ 퍼센트 원형 바 */}
+      <div className="absolute transform -translate-x-1/2 bottom-4 left-1/2">
+        <div className="relative w-16 h-16">
+          <svg className="absolute top-0 left-0 w-16 h-16">
+            <circle
+              cx="32"
+              cy="32"
+              r="25"
+              stroke="black"
+              strokeWidth="6"
+              fill="none"
+              strokeDasharray="157"
+              strokeDashoffset={`${157 - (157 * probability) / 100}`}
+              strokeLinecap="butt"
+              transform="rotate(-90 32 32)"
+            />
+            <circle
+              cx="32"
+              cy="32"
+              r="25"
+              stroke="#5CAB7C"
+              strokeWidth="5"
+              fill="none"
+              strokeDasharray="157"
+              strokeDashoffset={`${157 - (157 * probability) / 100}`}
+              strokeLinecap="butt"
+              transform="rotate(-90 32 32)"
+            />
+          </svg>
+          <div className="absolute inset-0 flex items-center justify-center text-sm font-semibold text-black">
+            {probability}%
           </div>
         </div>
       </div>

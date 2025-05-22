@@ -3,7 +3,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from '../api/axiosInstance';
 import PostCard from "../components/PostCard";
 import { API_BASE_URL } from "../config";
 
@@ -23,7 +23,7 @@ const PostList = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const res = await axios.get(`${API_BASE_URL}/api/posts/`, {
+        const res = await api.get(`${API_BASE_URL}/api/posts/`, {
           params: { page },
         });
 
@@ -116,7 +116,7 @@ const PostList = () => {
             {startPage > 1 && (
               <button
                 onClick={() => setPage(startPage - 1)}
-                className="px-3 py-1 border rounded bg-white text-gray-700"
+                className="px-3 py-1 text-gray-700 bg-white border rounded"
               >
                 &lt;
               </button>
@@ -140,7 +140,7 @@ const PostList = () => {
             {endPage < totalPages && (
               <button
                 onClick={() => setPage(endPage + 1)}
-                className="px-3 py-1 border rounded bg-white text-gray-700"
+                className="px-3 py-1 text-gray-700 bg-white border rounded"
               >
                 &gt;
               </button>

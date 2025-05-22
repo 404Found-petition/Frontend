@@ -2,6 +2,8 @@
 import React, { useState } from "react";
 import { Search } from "lucide-react";
 import { LoginAlertModal } from "./LoginAlertModal";
+import api from "../api/axiosInstance";
+import { API_BASE_URL } from "../config";
 
 export const SearchBar = ({ onSearchResult }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -21,12 +23,11 @@ export const SearchBar = ({ onSearchResult }) => {
       return;
     }
 
-    // 🔒 API 호출은 주석 처리
-    /*
+    // 실제 API 연동 코드로 교체
     try {
-      const response = await axios.post(
-        "http://localhost:8000/api/predict/",
-        { content: searchTerm },
+      const response = await api.post(
+        `${API_BASE_URL}/api/predict/`,
+        { petition_text: searchTerm },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -34,18 +35,11 @@ export const SearchBar = ({ onSearchResult }) => {
         }
       );
       console.log("백엔드 응답:", response.data);
-      onSearchResult(response.data);
+      onSearchResult(response.data); // 백엔드에서 받은 확률을 넘김
     } catch (error) {
       console.error("검색 실패:", error);
       alert("검색 중 오류가 발생했습니다.");
     }
-    */
-
-    // 🧪 더미 응답
-    const fakeResult = {
-      probability: Math.random(), // 0 ~ 1
-    };
-    onSearchResult(fakeResult); // ✅ Home.jsx 에 전달
   };
 
   return (

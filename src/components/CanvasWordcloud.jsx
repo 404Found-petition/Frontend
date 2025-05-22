@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import axios from "axios";
+import api from "../api/axiosInstance";
 import WordCloud from "wordcloud";
 import { API_BASE_URL } from "../config";
 
@@ -17,7 +17,7 @@ export default function CanvasWordcloud() {
 
   // ✅ API에서 단어 받아오기
   useEffect(() => {
-    axios.get(`${API_BASE_URL}/api/wordcloud/`)
+    api.get(`${API_BASE_URL}/api/wordcloud/`)
       .then((res) => {
         const keywordList = res.data.keywords || [];
         const formatted = keywordList.map(item => [item.word, item.score]);

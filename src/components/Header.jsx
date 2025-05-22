@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import axios from "axios";
+import api from "../api/axiosInstance";
 import LogoutPopup from "./LogoutPopup";
 import "../styles/global.css";
 import logoImage from "../assets/LAWGIC.png";
@@ -28,7 +28,7 @@ const Header = () => {
 
     try {
       const refreshToken = localStorage.getItem("refresh");
-      await axios.post("/api/logout/", { refresh: refreshToken });
+      await api.post("/api/logout/", { refresh: refreshToken });
       localStorage.removeItem("access");
       localStorage.removeItem("refresh");
       navigate("/");

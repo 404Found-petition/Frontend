@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import api from '../api/axiosInstance';
+import { API_BASE_URL } from "../config";
 import PasswordMismatchPopup from "../components/PasswordMismatchPopup";
 import IdDuplicatePopup from "../components/IdDuplicatePopup";
 import IdCheckRequiredPopup from "../components/IdCheckRequiredPopup";
@@ -8,7 +10,7 @@ export const SignUp = () => {
   const navigate = useNavigate();
 
   const [name, setName] = useState("");
-  const [username, setUsername] = useState("");
+  const [userid, setUserid] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [phone, setPhone] = useState("");
@@ -18,12 +20,33 @@ export const SignUp = () => {
   const [showIdDuplicatePopup, setShowIdDuplicatePopup] = useState(false);
   const [showIdCheckRequiredPopup, setShowIdCheckRequiredPopup] = useState(false);
 
-  const handleDuplicateCheck = () => {
-    setIdChecked(true);
-    setIsIdAvailable(username !== "used_id");
+  // ✅ 중복 확인
+  const handleDuplicateCheck = async () => {
+    console.log("🟢 중복 확인 버튼 클릭됨");
+
+    if (!userid.trim()) {
+      alert("아이디를 입력하세요.");
+      return;
+    }
+    console.log("🔍 서버로 중복 확인 요청 전송:", userid); // ✅ 이거 추가
+    try {
+      const res = await api.get(`${API_BASE_URL}/api/check-duplicate/`, {
+        params: { userid },
+      });
+      console.log("✅ 서버 응답:", res.data); // ✅ 응답 확인용
+      setIsIdAvailable(res.data.available);
+      setIdChecked(true);
+    } catch (err) {
+      console.error("중복 확인 실패:", err);
+      setIsIdAvailable(false);
+      setIdChecked(true);
+    }
   };
 
-  const handleSubmit = () => {
+  // ✅ 회원가입 요청
+  const handleSubmit = async () => {
+    console.log("🔽 SUBMIT 버튼 눌림");
+
     if (!idChecked) {
       setShowIdCheckRequiredPopup(true);
       return;
@@ -36,7 +59,19 @@ export const SignUp = () => {
       setShowPasswordPopup(true);
       return;
     }
-    navigate("/success");
+
+    try {
+      const response = await api.post(`${API_BASE_URL}/api/register/`, {
+        userid,
+        password,
+        name,
+        phone_num: phone, // ✅ 백엔드에 맞춘 필드명
+      });
+      console.log("✅ 회원가입 성공:", response.data);
+      navigate("/success");
+    } catch (error) {
+      console.error("❌ 회원가입 실패:", error.response?.data || error.message);
+    }
   };
 
   const handleClose = () => {
@@ -44,9 +79,10 @@ export const SignUp = () => {
   };
 
   return (
-    <div className="bg-white flex flex-row justify-center w-full">
+    <div className="flex flex-row justify-center w-full bg-white">
       <div className="bg-white w-[1440px] h-[1024px] relative">
         <div className="absolute w-[750px] h-[706px] top-[40px] left-[345px] bg-[#f6fff4] rounded-[16.3px] border-[2.93px] border-solid border-[#3f7d58] shadow-[0px_1.3px_1.3px_#00000040]">
+
           {/* 이름 */}
           <div className="absolute w-[321px] h-16 top-[166px] left-[213px]">
             <input
@@ -72,12 +108,16 @@ export const SignUp = () => {
             </div>
             <input
               type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={userid}
+              onChange={(e) => {
+                setUserid(e.target.value);
+                setIdChecked(false);
+              }}
               className="absolute w-[319px] h-11 top-5 left-0 bg-[#f7f5f5] rounded border border-black px-3 text-sm"
               placeholder="아이디를 입력하세요"
             />
             <button
+              type="button" // ✅ 이 한 줄 추가!
               onClick={handleDuplicateCheck}
               className="absolute w-[69px] h-[31px] top-[27px] left-[246px] bg-[#d9d9d9] rounded border border-black text-[9.9px]"
             >
@@ -132,6 +172,7 @@ export const SignUp = () => {
 
           {/* SUBMIT 버튼 */}
           <button
+            type="button"
             onClick={handleSubmit}
             className="absolute w-[115px] h-[31px] top-[624px] left-[315px] bg-[#5cab7c] text-white text-[12.4px] rounded border border-black"
           >
@@ -176,8 +217,6 @@ export const SignUp = () => {
 export default SignUp;
 
 
-
-
 //5.15 5:32 X자 이미지 없애고 x로 수정
 //5.16 12:40 비밀번호 실시간 일치/불일치 메시지, 불일치 SUBMIT 시 팝업, 로고&x시 메인
 //5.16 12:46 비밀번호 일치불일치 메시지 위치 조정
@@ -185,3 +224,5 @@ export default SignUp;
 //5.16 1:28 진짜 위치 됐고 비밀번호 불일치 팝업 위치도 수정 완   360/564
 //5.16 1:48 사용중 아이디 SUBMIT 할 때 안내창 팝업 뜨도록
 //5.17 14:52 중복 확인 안 하고 SUBMIT 할 때 안내창 팝업 뜨도록
+//5.22 20:08 회원가입 백 연동중...
+//5.22 20:13 중복확인 API도 추가
