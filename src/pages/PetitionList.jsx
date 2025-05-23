@@ -111,3 +111,7 @@ const PetitionList = ({ apiEndpoint = "/api/predictions/" }) => {
 };
 
 export default PetitionList;
+
+//5.24 1:16 My Petition Prediction History 로 바꿈 그리고 위로 좀 올림
+//5.24 2:05 유저페이지 내 청원 이행 확률 예측 사용 기록에서는 summary 볼 필요 없어서 버튼 삭제
+//5.24 3:29 지금 뭔가 이상함 데이터 넣는 과정에서 데이터가 잘못 들어가고 그런것 같은데 확인 중

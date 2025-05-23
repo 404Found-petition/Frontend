@@ -8,15 +8,14 @@ const PostListHistory = () => {
 
   // ✅ mine=true면 내가 쓴 게시글만, 아니면 전체
   const endpoint = isMine ? "posts/mine/" : "posts/";
-  
+
   return (
-    <div className="px-10 py-5">
-      <h2 className="mb-6 text-2xl font-bold">
-        {isMine ? "내가 작성한 게시글 전체보기" : "전체 게시글 목록"}
-      </h2>
+    <div className="px-10 pt-5"> {/* ✅ py-5 → pt-5로 수정해서 위 여백만 적용 */}
       <PostList apiEndpoint={endpoint} />
     </div>
   );
 };
 
 export default PostListHistory;
+
+//5.24 1:02 내가 작성한 게시글 전체보기 문구 삭제제

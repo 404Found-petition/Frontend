@@ -5,7 +5,14 @@ const Seat = ({ seat, onHover, onLeave, size = 23 }) => {
 
   return (
     <div
-      className="absolute border border-black rounded-full select-none"
+      className={`
+        absolute 
+        border border-black 
+        rounded-full 
+        select-none 
+        transition-all duration-300 ease-in-out 
+        hover:scale-125 hover:shadow-xl
+      `}
       style={{
         top: `${seat.top}px`,
         left: `${seat.left}px`,
@@ -13,8 +20,8 @@ const Seat = ({ seat, onHover, onLeave, size = 23 }) => {
         height: `${size}px`,
         backgroundColor: seat.color || "#d9d9d9",
         cursor: "pointer",
-        outline: "none",       // 포커스 외곽선 제거
-        userSelect: "none",    // 텍스트 선택 방지
+        outline: "none",
+        userSelect: "none",
       }}
       onMouseEnter={() => onHover && onHover(seat)}
       onMouseLeave={() => onLeave && onLeave()}
@@ -23,4 +30,3 @@ const Seat = ({ seat, onHover, onLeave, size = 23 }) => {
 };
 
 export default Seat;
-

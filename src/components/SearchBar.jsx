@@ -1,4 +1,4 @@
-// 🔍 SearchBar.jsx - 청원 검색창 + 확률 예측 결과 상위 컴포넌트에 전달
+// 🔍 SearchBar.jsx – 검색창 전체 반응형 + 아이콘 밀림 해결
 import React, { useState } from "react";
 import { Search } from "lucide-react";
 import { LoginAlertModal } from "./LoginAlertModal";
@@ -23,7 +23,6 @@ export const SearchBar = ({ onSearchResult }) => {
       return;
     }
 
-    // 실제 API 연동 코드로 교체
     try {
       const response = await api.post(
         `${API_BASE_URL}/api/predict/`,
@@ -35,7 +34,7 @@ export const SearchBar = ({ onSearchResult }) => {
         }
       );
       console.log("백엔드 응답:", response.data);
-      onSearchResult(response.data); // 백엔드에서 받은 확률을 넘김
+      onSearchResult(response.data);
     } catch (error) {
       console.error("검색 실패:", error);
       alert("검색 중 오류가 발생했습니다.");
@@ -43,20 +42,23 @@ export const SearchBar = ({ onSearchResult }) => {
   };
 
   return (
-    <div className="relative w-[795px] h-[58px] bg-[#ecebeb] border-[1.81px] border-solid border-black flex items-center px-4">
+    // 🔍 수정된 SearchBar JSX container
+    <div className="flex items-center w-full h-[3rem] px-4 bg-[#ecebeb] border-2 border-green-700 rounded-3xl shadow-md">
+
       <input
         type="text"
         placeholder="청원을 입력하세요."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        className="flex-grow h-[40px] bg-[#ecebeb] text-2xl text-black placeholder-[#a2a2a2] focus:outline-none"
+        className="flex-grow bg-transparent text-base sm:text-lg placeholder-[#a2a2a2] focus:outline-none"
       />
-      <Search
-        size={34}
-        strokeWidth={3}
-        className="text-green-700 cursor-pointer"
+      <button
         onClick={handleSearchClick}
-      />
+        className="ml-2 text-green-700 hover:scale-105 transition-transform"
+        style={{ flexShrink: 0 }} // ✅ 아이콘이 밀리지 않도록 고정
+      >
+        <Search size={24} strokeWidth={3} />
+      </button>
       {showModal && <LoginAlertModal onClose={() => setShowModal(false)} />}
     </div>
   );

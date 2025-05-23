@@ -181,16 +181,17 @@ const PostDetail = () => {
             </div>
 
             {/* ✅ 항상 하단 고정되는 투표 영역 */}
-            <div className="mt-[15px]">
-              <PostVoteBox
-                voted={voted}
-                voteResult={voteResult}
-                voteTitle={post.vote_title}
-                onVote={handleVote}
-                heightClass="min-h-[100px]"
-                selectedOption={selectedOption}
-              />
-            </div>
+            {post.has_poll && (
+              <div className="mt-[15px]">
+                <PostVoteBox
+                  voted={voted}
+                  voteResult={voteResult}
+                  onVote={handleVote}
+                  heightClass="min-h-[100px]"
+                  selectedOption={selectedOption}
+                />
+              </div>
+            )}
           </div>
 
           {/* 오른쪽: 댓글 */}

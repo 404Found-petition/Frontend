@@ -1,17 +1,15 @@
 import React, { useState, useRef, useEffect } from "react";
 
-const PetitionListCard = ({ title, summary, probability }) => {
+const PetitionListCard = ({ title, summary, probability, hideSummaryTag = false }) => {
   const [showSummary, setShowSummary] = useState(false);
-  const scrollRef = useRef(null); // 🔍 스크롤 영역 DOM 접근
+  const scrollRef = useRef(null);
 
-  // ✅ 요약/제목 전환 시 스크롤 맨 위로
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = 0;
     }
   }, [showSummary]);
 
-  // 제목 줄바꿈
   const splitTitleByLength = (title) => {
     const words = title.split(" ");
     let line1 = "";
@@ -35,23 +33,23 @@ const PetitionListCard = ({ title, summary, probability }) => {
 
   return (
     <div className="relative w-[300px] h-[300px] bg-[#E3F8EB] rounded-[12px] p-4 border-[2px] border-black shadow-sm overflow-hidden">
-      {/* ✅ 전환 버튼 */}
-      <button
-        onClick={() => setShowSummary((prev) => !prev)}
-        className="text-[13px] font-semibold px-3 py-1 border-[1.5px] border-black rounded-md bg-white shadow-sm"
-      >
-        {showSummary ? "title" : "summary"}
-      </button>
+      {/* ✅ summary 버튼은 조건부 렌더링 */}
+      {!hideSummaryTag && (
+        <button
+          onClick={() => setShowSummary((prev) => !prev)}
+          className="text-[13px] font-semibold px-3 py-1 border-[1.5px] border-black rounded-md bg-white shadow-sm"
+        >
+          {showSummary ? "title" : "summary"}
+        </button>
+      )}
 
-      {/* ✅ 제목/내용 영역 (스크롤 영역 + ref 연결) */}
+      {/* ✅ 텍스트 영역 */}
       <div
         ref={scrollRef}
         className="absolute top-[50px] bottom-[80px] left-4 right-4 overflow-auto flex items-start justify-center text-center"
       >
-        {showSummary ? (
-          <p className="text-[15px] font-semibold text-gray-700 whitespace-pre-line">
-            {summary}
-          </p>
+        {!hideSummaryTag && showSummary ? (
+          <p className="text-[15px] font-semibold text-gray-700 whitespace-pre-line">{summary}</p>
         ) : (
           <div className="text-[22px] font-bold text-black leading-[1.6]">
             {line1}
@@ -104,6 +102,7 @@ export { PetitionListCard };
 
 
 
+
 //5.19 19:07 피그마 디자인대로 수정 중 아직 확인 X
 //5.19 19:29 색, 크기 조정 중
 //5.19 19:38 제목 색, 카드 크기 글자 줄바꿈 설정
@@ -113,3 +112,4 @@ export { PetitionListCard };
 //5.19 19:53 ㄴ 다시 수정
 //5.19 19:55 퍼센테이지 바 외곽선, 조금 두껍게
 //5.19 19: 57 일단 완성
+//5.24 2:05 유저페이지 내 청원 이행 확률 예측 사용 기록에서는 summary 볼 필요 없어서 버튼 삭제
