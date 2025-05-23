@@ -12,8 +12,6 @@ export const SignUpSuccess = () => {
 
   return (
     <div className="bg-white flex flex-col items-center w-full min-h-screen">
-      {/* ✅ 공통 헤더 */}
-      <Header isCompactPage={true} />
 
       {/* ✅ SUCCESS 창 */}
       <div className="w-[717px] h-[675px] mt-[60px] bg-[#f6fff4] rounded-[15.57px] border-[2.8px] border-solid border-[#5cab7c] shadow-[0px_1.25px_1.25px_#00000040] relative">

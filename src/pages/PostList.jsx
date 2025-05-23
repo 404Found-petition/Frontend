@@ -1,35 +1,34 @@
-// 게시판 글 목록을 서버에서 받아와 카드 형식으로 보여주고
-// 페이지네이션은 10개 단위로 묶어 <, > 화살표로 넘기도록 구성
-
+// src/pages/PostList.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from '../api/axiosInstance';
+import api from "../api/axiosInstance"; // axios 인스턴스
 import PostCard from "../components/PostCard";
-import { API_BASE_URL } from "../config";
+import { API_BASE_URL } from "../config"; // 백엔드 기본 URL
 
-const PostList = () => {
-  const [posts, setPosts] = useState([]);
-  const [page, setPage] = useState(1); // 현재 페이지 번호
-  const [totalPages, setTotalPages] = useState(1); // 전체 페이지 수
+// 게시글 목록 컴포넌트 (기본 endpoint는 /posts/)
+const PostList = ({ apiEndpoint = "/posts/" }) => {
+  const [posts, setPosts] = useState([]); // 게시글 목록 상태
+  const [page, setPage] = useState(1); // 현재 페이지
+  const [totalPages, setTotalPages] = useState(1); // 총 페이지 수
   const navigate = useNavigate();
 
-  // 🔸 페이지네이션 그룹 사이즈 (10개 단위로 그룹화)
+  // 페이지네이션 그룹 사이즈 (한 번에 10개 표시)
   const PAGE_GROUP_SIZE = 10;
   const currentGroup = Math.floor((page - 1) / PAGE_GROUP_SIZE);
   const startPage = currentGroup * PAGE_GROUP_SIZE + 1;
   const endPage = Math.min(startPage + PAGE_GROUP_SIZE - 1, totalPages);
 
-  // 🔹 게시글 목록을 백엔드 API로부터 불러오기
+  // 게시글 불러오기 useEffect
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const res = await api.get(`${API_BASE_URL}/api/posts/`, {
+        const res = await api.get(apiEndpoint, {
           params: { page },
         });
 
         if (res.data.success) {
-          setPosts(res.data.data); // 게시글 배열
-          setTotalPages(res.data.total_pages); // 전체 페이지 수
+          setPosts(res.data.data); // 게시글 목록
+          setTotalPages(res.data.total_pages); // 총 페이지 수
         } else {
           console.error("❌ 게시글 불러오기 실패:", res.data.message);
         }
@@ -39,54 +38,58 @@ const PostList = () => {
     };
 
     fetchPosts();
-  }, [page]);
+  }, [apiEndpoint, page]);
 
-  // 🔹 투표 처리 (로컬 상태만 업데이트)
+  // 투표 핸들러 (로컬 상태 반영)
   const handleVote = (postId, option) => {
-    setPosts((prev) =>
-      prev.map((post) => {
-        if (post.id !== postId) return post;
-
-        const updatedVote = {
-          ...(post.vote_result || { yes: 0, no: 0 }),
-          [option]: (post.vote_result?.[option] || 0) + 1,
-        };
-
-        return {
-          ...post,
-          voted: true,
-          voted_option: option,
-          vote_result: updatedVote,
-        };
-      })
-    );
-  };
-
-  // 🔹 댓글 추가 (로컬 상태만 업데이트)
-  const handleCommentSubmit = (postId, commentContent) => {
     setPosts((prev) =>
       prev.map((post) =>
         post.id === postId
           ? {
               ...post,
-              comments: [
-                ...(post.comments || []),
-                {
-                  nickname: "익명",
-                  content: commentContent,
-                  date: new Date().toISOString().slice(0, 10),
-                },
-              ],
+              voted: true,
+              voted_option: option,
+              vote_result: {
+                ...(post.vote_result || { yes: 0, no: 0 }),
+                [option]: (post.vote_result?.[option] || 0) + 1,
+              },
             }
           : post
       )
     );
   };
 
+  // 댓글 작성 핸들러
+  const handleCommentSubmit = async (postId, commentContent) => {
+    try {
+      const res = await api.post(`/comments/${postId}/`, {
+        content: commentContent,
+      });
+
+      if (res.data.success) {
+        const newComment = res.data.comment;
+        setPosts((prev) =>
+          prev.map((post) =>
+            post.id === postId
+              ? {
+                  ...post,
+                  comments: [...(post.comments || []), newComment],
+                }
+              : post
+          )
+        );
+      } else {
+        console.error("❌ 댓글 저장 실패:", res.data.message);
+      }
+    } catch (err) {
+      console.error("❌ 댓글 등록 API 오류:", err);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white pt-16 pb-32">
       <div className="w-full max-w-[1400px] p-6 mx-auto border border-black rounded-[20px] bg-white">
-        {/* 상단 제목 및 글쓰기 버튼 */}
+        {/* 상단: 제목 + 글쓰기 버튼 */}
         <div className="flex items-center justify-between pb-4 mb-6 border-b border-black">
           <h2 className="text-[32px] font-bold text-[#6b6b6b]">Post</h2>
           <button
@@ -109,10 +112,10 @@ const PostList = () => {
           ))}
         </div>
 
-        {/* 페이지네이션 (10개 단위) */}
+        {/* 페이지네이션 */}
         {totalPages > 1 && (
           <div className="flex justify-center gap-2 mt-10">
-            {/* 이전 그룹 이동 */}
+            {/* 이전 페이지 그룹 */}
             {startPage > 1 && (
               <button
                 onClick={() => setPage(startPage - 1)}
@@ -122,21 +125,20 @@ const PostList = () => {
               </button>
             )}
 
-            {/* 현재 그룹의 페이지 번호 버튼 */}
+            {/* 현재 그룹의 페이지들 */}
             {Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i).map((n) => (
               <button
                 key={n}
                 onClick={() => setPage(n)}
-                className={`px-4 py-2 border rounded ${page === n
-                  ? "bg-green-700 text-white font-bold"
-                  : "bg-white text-black"
+                className={`px-4 py-2 border rounded ${
+                  page === n ? "bg-green-700 text-white font-bold" : "bg-white text-black"
                 }`}
               >
                 {n}
               </button>
             ))}
 
-            {/* 다음 그룹 이동 */}
+            {/* 다음 페이지 그룹 */}
             {endPage < totalPages && (
               <button
                 onClick={() => setPage(endPage + 1)}

@@ -89,35 +89,36 @@ export default SeatChartStatus;
 */
 
 
-// SeatChartStatus.jsx
 import React, { useState, useEffect } from "react";
 import api from "../api/axiosInstance";
 import Seat from "../components/Seat";
 import { Tooltip } from "../components/Tooltip";
-import { API_BASE_URL } from "../config"; // 예: http://localhost:8000
+import { API_BASE_URL } from "../config";
 
 const ROW_COUNTS = [48, 42, 39, 36, 33, 30, 27, 24, 21];
 const CENTER_X = 500;
 const CENTER_Y = -10;
-const RADIUS_STEP = 30;
-const innerMostRadius = 500 - ROW_COUNTS.length * RADIUS_STEP - 25;
 
-const createSectorPath = (percent) => {
-  const radius = innerMostRadius;
-  const angle = (percent / 100) * 180;
-  const startX = CENTER_X + radius * Math.cos(0);
-  const startY = CENTER_Y + radius * Math.sin(0);
-  const endX = CENTER_X + radius * Math.cos((angle * Math.PI) / 180);
-  const endY = CENTER_Y + radius * Math.sin((angle * Math.PI) / 180);
-  const largeArcFlag = angle > 180 ? 1 : 0;
-
-  return `M${CENTER_X},${CENTER_Y} L${startX},${startY} A${radius},${radius} 0 ${largeArcFlag},1 ${endX},${endY} Z`;
-};
-
-const SeatChartStatus = ({ targetPercentage }) => {
+const SeatChartStatus = ({ targetPercentage, isCompact }) => {
   const [hoveredSeat, setHoveredSeat] = useState(null);
   const [percentage, setPercentage] = useState(0);
   const [lawmembers, setLawmembers] = useState([]);
+
+  // 🔹 row 간격 조절: 스크롤 축소 모드에서 더 촘촘하게
+  const rowGap = isCompact ? 20 : 30;
+  const innerMostRadius = 500 - ROW_COUNTS.length * rowGap - 25;
+
+  const createSectorPath = (percent) => {
+    const radius = innerMostRadius;
+    const angle = (percent / 100) * 180;
+    const startX = CENTER_X + radius * Math.cos(0);
+    const startY = CENTER_Y + radius * Math.sin(0);
+    const endX = CENTER_X + radius * Math.cos((angle * Math.PI) / 180);
+    const endY = CENTER_Y + radius * Math.sin((angle * Math.PI) / 180);
+    const largeArcFlag = angle > 180 ? 1 : 0;
+
+    return `M${CENTER_X},${CENTER_Y} L${startX},${startY} A${radius},${radius} 0 ${largeArcFlag},1 ${endX},${endY} Z`;
+  };
 
   useEffect(() => {
     api
@@ -130,8 +131,8 @@ const SeatChartStatus = ({ targetPercentage }) => {
     if (typeof targetPercentage !== "number") return;
 
     let current = 0;
-    const final = Math.max(0, targetPercentage); // 혹시 모를 음수 방지
-    const step = final > 0 ? final / 30 : 1; // ✅ 0일 때도 한 번은 업데이트 되도록 step 최소 1
+    const final = Math.max(0, targetPercentage);
+    const step = final > 0 ? final / 30 : 1;
 
     const interval = setInterval(() => {
       if (current >= final) {
@@ -149,14 +150,25 @@ const SeatChartStatus = ({ targetPercentage }) => {
   let seatIndex = 0;
 
   return (
-    <div className="relative w-[1000px] h-[550px] mx-auto overflow-visible">
-      <svg width="1000" height="550" className="absolute top-0 left-0 z-0 overflow-visible">
+    <div
+      className="relative mx-auto overflow-visible transition-all duration-300 ease-in-out"
+      style={{
+        height: isCompact ? "300px" : "550px", // 진짜 높이 줄이기
+        width: isCompact ? "900px" : "1000px",
+      }}
+    >
+      <svg
+        width="100%"
+        height="100%"
+        viewBox="0 0 1000 550"
+        className="absolute top-0 left-0 z-0 overflow-visible"
+      >
         <path d={`M0,${CENTER_Y} A500,500 0 0,0 1000,${CENTER_Y}`} fill="#e5e5e5" />
         <path d={createSectorPath(percentage)} fill="#5CAB7C" />
       </svg>
 
       <div
-        className="absolute text-[48px] font-bold text-black z-10 select-none"
+        className={`absolute font-bold text-black z-10 select-none ${isCompact ? "text-[36px]" : "text-[48px]"}`}
         style={{
           top: `${CENTER_Y + innerMostRadius / 2 - 10}px`,
           left: "50%",
@@ -167,8 +179,9 @@ const SeatChartStatus = ({ targetPercentage }) => {
       </div>
 
       {ROW_COUNTS.map((count, rowIdx) => {
-        const radius = 500 - (rowIdx + 1) * RADIUS_STEP;
+        const radius = 500 - (rowIdx + 1) * rowGap;
         const angleStep = 180 / (count - 1);
+
         return Array.from({ length: count }).map((_, i) => {
           const angle = (180 + i * angleStep) * (Math.PI / 180);
           const x = CENTER_X + radius * Math.cos(angle) - 15;
@@ -213,5 +226,3 @@ const SeatChartStatus = ({ targetPercentage }) => {
 };
 
 export default SeatChartStatus;
-
-

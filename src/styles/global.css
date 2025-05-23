@@ -45,12 +45,12 @@
 /* ---------------------------------------------------------------- */
 
 /* ✅ 이미지 백그라운드 로고 클래스 */
-.bg-lawgic-logo {
-  background-image: url("../assets/LAWGIC.png"); /* src/assets/LAWGIC.png 기준 */
+/* .bg-lawgic-logo {
+  background-image: url("../assets/LAWGIC.png"); 
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-}
+} */
 
 /* 5.15 1:27
 ✅ :root 중복 선언 → 하나로 통합

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { PetitionListCard } from "../components/PetitionListCard";
+import { API_BASE_URL } from "../config";
 
-const PetitionList = () => {
+const PetitionList = ({ apiEndpoint = "/api/predictions/" }) => {
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -9,11 +10,21 @@ const PetitionList = () => {
   const PETITIONS_PER_PAGE = 24;
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/predictions/")
-      .then((res) => res.json())
+    const token = localStorage.getItem("access");
+
+    fetch(`${API_BASE_URL}${apiEndpoint}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("API 요청 실패");
+        return res.json();
+      })
       .then((data) => {
-        const converted = data.map((item) => ({
-          department: item.petition_title.slice(0, 6), // 부서명 없으니 제목 일부로 대체
+        const raw = data.data || data; // 백엔드 응답 구조에 따라 조정
+        const converted = raw.map((item) => ({
+          department: item.petition_title?.slice(0, 6) || "기타",
           title: item.petition_title,
           content: item.petition_content,
           percentage: parseFloat(item.prediction_percentage.toFixed(1)),
@@ -27,18 +38,16 @@ const PetitionList = () => {
       .catch((err) => {
         console.error("❌ 예측 데이터 불러오기 실패:", err);
       });
-  }, [page]);
+  }, [apiEndpoint, page]);
 
   return (
     <div className="flex flex-col items-center w-full min-h-screen bg-white">
-      {/* 카드 박스 */}
       <div className="w-[1336px] mt-10 rounded-[34px] border-2 border-black p-10">
         <h2 className="text-[22px] font-semibold text-left text-[#6C6C6C] mb-2">
           Status of Petition Agreement
         </h2>
         <hr className="mb-6 border-t border-gray-400" />
 
-        {/* 카드 리스트 */}
         <div className="grid grid-cols-4 gap-6">
           {posts.map((post, index) => (
             <PetitionListCard
@@ -52,7 +61,6 @@ const PetitionList = () => {
         </div>
       </div>
 
-      {/* ✅ 새 페이지네이션 (10개 단위 그룹) */}
       {totalPages > 1 && (
         <div className="flex justify-center gap-2 mt-10 mb-12">
           {(() => {
@@ -63,7 +71,6 @@ const PetitionList = () => {
 
             return (
               <>
-                {/* 이전 그룹 이동 */}
                 {startPage > 1 && (
                   <button
                     onClick={() => setPage(startPage - 1)}
@@ -73,21 +80,19 @@ const PetitionList = () => {
                   </button>
                 )}
 
-                {/* 현재 그룹 페이지 버튼 */}
                 {Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i).map((n) => (
                   <button
                     key={n}
                     onClick={() => setPage(n)}
                     className={`px-4 py-2 border-[1.5px] rounded font-semibold ${page === n
-                        ? "bg-green-700 text-white"
-                        : "bg-white text-black hover:bg-gray-100"
-                      }`}
+                      ? "bg-green-700 text-white"
+                      : "bg-white text-black hover:bg-gray-100"
+                    }`}
                   >
                     {n}
                   </button>
                 ))}
 
-                {/* 다음 그룹 이동 */}
                 {endPage < totalPages && (
                   <button
                     onClick={() => setPage(endPage + 1)}
@@ -101,7 +106,6 @@ const PetitionList = () => {
           })()}
         </div>
       )}
-
     </div>
   );
 };

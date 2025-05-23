@@ -9,16 +9,8 @@ import Graph from "../components/Graph";
 import Wordcloud from "../components/Wordcloud";
 import HomePostCard from "../components/HomePostCard";
 import { PetitionCard } from "../components/PetitionCard";
+import { API_BASE_URL } from "../config";
 
-// ✅ 샘플 게시글: id 추가
-const samplePosts = [
-  { id: 1, username: "User_ID", date: "2025.03.31", preview: "주택 정책 개정 필요성에 대해 논의합니다." },
-  { id: 2, username: "User_ID", date: "2025.03.30", preview: "전기차 충전소 확대 청원이 필요합니다." },
-  { id: 3, username: "User_ID", date: "2025.03.29", preview: "교통안전 강화를 위한 법 개정 청원입니다." },
-  { id: 4, username: "User_ID", date: "2025.03.28", preview: "환경 보호를 위한 일회용품 규제 청원입니다." },
-  { id: 5, username: "User_ID", date: "2025.03.27", preview: "교육 현장의 변화에 대한 개선 청원입니다." },
-  { id: 6, username: "User_ID", date: "2025.03.26", preview: "의료보험 보장성 확대에 대한 국민 청원입니다." },
-];
 
 
 const Home = () => {
@@ -29,6 +21,34 @@ const Home = () => {
   const [fastClose, setFastClose] = useState(false);
 
   const [petitionData, setPetitionData] = useState([]); // 청원예측현황 부분
+  const [isScrolled, setIsScrolled] = useState(false); // 스크롤 시 화면 축소
+  const [scrollY, setScrollY] = useState(0);
+  const [homePosts, setHomePosts] = useState([]);
+
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/api/posts/recent/`)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("📦 recent post API 응답:", data);  // ✅ 디버깅용 로그
+        if (data.success && Array.isArray(data.data)) {
+          const recentPosts = data.data.map((post) => ({
+            id: post.id,
+            username: post.userid,
+            date: post.created_at?.slice(0, 10),
+            title: post.title,
+          }));
+          setHomePosts(recentPosts);
+        } else {
+          console.error("❌ 게시글 응답 오류:", data.message);
+        }
+      })
+      .catch((err) => console.error("❌ 게시글 불러오기 실패:", err));
+  }, []);
+
+
+
+
   useEffect(() => {
     fetch("http://localhost:8000/api/predictions/")
       .then((res) => res.json())
@@ -71,11 +91,23 @@ const Home = () => {
     }
   }, []);
 
+  // 스크롤 시 화면 축소
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   // ✅ 확률 게이지용 안전 처리
   let percent = 0;
   if (prediction && typeof prediction.predicted_percentage === "number") {
     percent = Math.round(prediction.predicted_percentage);
   }
+
+  const scaleFactor = Math.max(0.05, 1 - scrollY / 250);
 
   return (
     <div className="screen">
@@ -119,13 +151,24 @@ const Home = () => {
             <SearchBar onSearchResult={(result) => setPrediction(result)} />
           </div>
 
+
           {/* 좌석 배치도 + 퍼센트 게이지 */}
-          <div style={{ position: "relative" }}>
+          <div
+            className="transition-transform duration-[100ms] ease-out origin-top"
+            style={{
+              transform: `scaleY(${scaleFactor}) translateY(-${scrollY / 10}px)`,
+            }}
+          >
             <SeatChartStatus targetPercentage={percent} />
           </div>
 
           {/* 그래프 + 워드클라우드 + 카드 */}
-          <div className="flex flex-row items-start justify-center gap-8 mt-12" style={{ marginTop: -20 }}>
+          <div
+            className="flex flex-row items-start justify-center gap-8 transition-transform duration-[100ms] ease-out"
+            style={{
+              transform: `translateY(-${Math.min(scrollY * 2.2, 3000)}px)`,
+            }}
+          >
             <div className="flex flex-col gap-10">
               <div className="flex flex-row gap-[10px]">
                 <Graph />
@@ -138,7 +181,7 @@ const Home = () => {
                   <button onClick={() => navigate("/posts")} className="text-[30px] font-semibold cursor-pointer">...</button>
                 </div>
                 <div className="flex flex-col space-y-6">
-                  {samplePosts.map((post) => (
+                  {homePosts.map((post) => (
                     <HomePostCard key={post.id} {...post} />
                   ))}
                 </div>
@@ -169,9 +212,6 @@ const Home = () => {
           </div>
         </div>
       </div>
-
-      {/* 여유 여백 */}
-      <div className="h-[100px]" />
     </div>
   );
 };
@@ -179,4 +219,5 @@ const Home = () => {
 export default Home;
 
 
-//05.21 22:10 하단부 여백 추가
+//05.21 22:10 하단부 여백 추가 
+//05.23 하단부 여백 제거

@@ -6,7 +6,7 @@ import { LoginAlertModal } from "./LoginAlertModal";
 const PostCard = ({ post, onCommentSubmit, onVote }) => {
   const [comment, setComment] = useState("");
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const isLoggedIn = !!localStorage.getItem("token");
+  const isLoggedIn = !!localStorage.getItem("access");
   const navigate = useNavigate();
 
   const handleVote = (option) => {
@@ -41,29 +41,39 @@ const PostCard = ({ post, onCommentSubmit, onVote }) => {
       className="w-full p-4 mb-6 bg-white border border-black shadow-sm rounded-xl min-h-[260px] cursor-pointer"
       onClick={handleCardClick}
     >
-      {/* 게시글 상단 정보 */}
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex flex-col items-center min-w-[50px] mt-1">
-          <div className="w-[28px] h-[28px] rounded-full bg-green-700 mb-1 shrink-0" />
-          <span className="text-xs text-gray-600">
-            {post.author || "익명"}
+      {/* 상단: 프로필 동그라미 + 작성자 ID + 작성일 */}
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center space-x-2 pl-1">
+          <div className="w-[28px] h-[28px] rounded-full bg-green-700 shrink-0" />
+          <span className="text-sm text-gray-600 font-medium truncate max-w-[100px]">
+            {post.userid}
           </span>
         </div>
-
-        <div className="flex-1 px-[6px]">
-          <h3 className="text-lg font-bold text-gray-800">{post.title}</h3>
-          <p className="mt-1 text-sm text-gray-700">{post.content}</p>
-        </div>
-
-        <span className="mr-4 text-sm text-gray-500 whitespace-nowrap">
+        <span className="text-sm text-gray-500 whitespace-nowrap">
           {post.created_at?.slice(0, 10) || "작성일 없음"}
         </span>
+      </div>
+
+      {/* 제목 + 본문 미리보기 */}
+      <div className="mt-1 px-[2px] overflow-hidden">
+        <h3
+          className="text-lg font-bold text-gray-800 truncate w-full block"
+          title={post.title}
+        >
+          {post.title}
+        </h3>
+        <p
+          className="mt-1 text-sm text-gray-700 truncate w-full block"
+          title={post.content}
+        >
+          {post.content}
+        </p>
       </div>
 
       {/* 회색 구분선 */}
       <hr className="my-3 border-t border-gray-300" />
 
-      {/* 투표 영역 */}
+      {/* 투표 박스 */}
       {post.vote_title && (
         <div className="my-4" onClick={(e) => e.stopPropagation()}>
           <PostVoteBox
@@ -78,18 +88,23 @@ const PostCard = ({ post, onCommentSubmit, onVote }) => {
 
       {/* 댓글 렌더링 */}
       <div
-        className="flex flex-col pl-4 gap-y-6"
+        className="flex flex-col pl-4 gap-y-6 min-h-[100px]"  // ✅ 최소 높이 2개 댓글 예상 높이로 확보
         onClick={(e) => e.stopPropagation()}
       >
         {visibleComments.map((c, idx) => (
           <div key={idx} className="flex items-start space-x-4">
-            <div className="w-6 h-6 mt-1 bg-white border-4 border-green-600 rounded-full" />
-            <div>
+            <div className="w-6 h-6 mt-1 min-w-[24px] bg-white border-4 border-green-600 rounded-full shrink-0" />
+            <div className="flex flex-col w-full">
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-sm font-semibold">{c.nickname || "익명"}</span>
+                <span className="text-sm font-semibold">{c.userid || "익명"}</span>
                 <span className="text-xs text-gray-500">{c.date || ""}</span>
               </div>
-              <p className="text-base text-gray-700">{c.content}</p>
+              <p
+                className="text-sm text-gray-700 truncate overflow-hidden whitespace-nowrap max-w-[90%]"
+                title={c.content}
+              >
+                {c.content}
+              </p>
             </div>
           </div>
         ))}

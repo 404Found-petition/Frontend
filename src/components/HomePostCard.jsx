@@ -4,11 +4,11 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const HomePostCard = ({ username, date, preview, id }) => {
+const HomePostCard = ({ username, date, title, id }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/posts/${id}`); // ← ✅ 이 부분이 핵심
+    navigate(`/posts/${id}`);
   };
 
   return (
@@ -22,11 +22,12 @@ const HomePostCard = ({ username, date, preview, id }) => {
         <div className="text-[15px] text-[#6b6b6b] mt-1">{date}</div>
       </div>
       <p className="absolute top-[85px] left-[77px] text-[22px] font-medium text-black w-[532px]">
-        {preview}
+        {title}
       </p>
     </div>
   );
 };
+
 
 export default HomePostCard;
 
