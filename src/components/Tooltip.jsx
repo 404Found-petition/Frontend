@@ -1,4 +1,5 @@
 import React from "react";
+import { API_BASE_URL } from "../config"; // 🔹 백엔드 주소 설정
 
 export const Tooltip = ({
   name,
@@ -10,13 +11,12 @@ export const Tooltip = ({
 }) => {
   if (!position) return null;
 
-  // ✅ undefined 대비 안전 처리
+  // ✅ 안전 처리
   const safeTags = Array.isArray(tags) ? tags : [];
   const safeBills = Array.isArray(bills) ? bills : [];
 
-  // ✅ 여기! 출력해서 구조 확인
-  console.log("Tooltip bills:", safeBills);
-
+  // ✅ 디버깅 로그
+  console.log("🟢 Tooltip props:", { name, imageSrc, bills });
 
   return (
     <div
@@ -34,19 +34,38 @@ export const Tooltip = ({
           ))}
         </div>
 
-        <ul className="mt-3 list-disc list-inside text-[14px] text-gray-700 space-y-1">
+        {/* ✅ 법률안 목록 */}
+        <ul
+          className="mt-3 list-disc list-inside text-gray-700 space-y-1"
+          style={{
+            fontSize: "13px",           // 글자 1px 작게
+            maxWidth: "280px",         // 오른쪽 사진 침범 방지
+            overflowWrap: "break-word" // 너무 긴 단어 줄바꿈
+          }}
+        >
           {safeBills.slice(0, 3).map((bill, idx) => {
             const text = typeof bill === "string" ? bill : bill?.title;
             return <li key={idx}>{text}</li>;
           })}
         </ul>
-
       </div>
 
       {/* 오른쪽 이미지 영역 */}
-      <div className="w-[70px] h-[70px] bg-gray-200 ml-4 rounded-md overflow-hidden">
+      <div
+        className="ml-4 rounded-md overflow-hidden"
+        style={{
+          width: "84px",    // ✅ 1.6배 확대 (원래 70px)
+          height: "112px",  // ✅ 증명사진 비율 3:4
+          flexShrink: 0,
+          backgroundColor: "#e5e5e5"
+        }}
+      >
         <img
-          src={imageSrc || "/images/placeholder.png"}
+          src={
+            imageSrc
+              ? (imageSrc.startsWith("http") ? imageSrc : `${API_BASE_URL}${imageSrc}`)
+              : "/images/placeholder.png"
+          }
           alt="의원 이미지"
           className="w-full h-full object-cover border"
         />

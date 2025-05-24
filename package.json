@@ -21,12 +21,14 @@
     "web-vitals": "^2.1.4",
     "wordcloud": "^1.2.3"
   },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
+"scripts": {
+  "start": "react-scripts start",
+  "build": "react-scripts build",
+  "test": "react-scripts test",
+  "eject": "react-scripts eject",
+  "vercel-deploy": "react-scripts build"
+},
+
   "eslintConfig": {
     "extends": [
       "react-app",

@@ -93,7 +93,8 @@ const UserPage = () => {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
-        setMyPredictions(Array.isArray(res.data) ? res.data : []);
+        setMyPredictions(Array.isArray(res.data.data) ? res.data.data : []);
+
       })
       .catch((err) => console.error("❌ 예측 기록 불러오기 실패", err));
   }, []);
@@ -204,3 +205,4 @@ export default UserPage;
 //5.24 00:30 ✅ myPosts를 /posts/mine/recent/ API로 변경하여 4개만 미리 보여주도록 수정함
 //5.23 23:45 검색 기록 유저페이지에서 3개만 보여주도록 수정 잘보이는지 확인하기 -> 확인 완 (이제 디자인 수정하기)
 //5.24 12:46 유저페이지 내 디자인 수정 완
+//5.24 22:54 setMyPredictions(Array.isArray(res.data.data) ? res.data.data : []); 부분 이걸로 수정완 ->유저페이지에서도 ... 통해서 들어가도 잘 보임
