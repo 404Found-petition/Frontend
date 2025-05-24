@@ -1,4 +1,4 @@
-const DEV_MODE = false; // 배포할 땐 false로 바꾸기
+const DEV_MODE = true; // 배포할 땐 false로 바꾸기
 
 const DEV_API_URL = "http://localhost:8000";  // Django 백엔드 로컬 주소
 const PROD_API_URL = "https://lawgic.p-e.kr"; // AWS 등 배포 주소로 수정

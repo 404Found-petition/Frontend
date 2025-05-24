@@ -33,6 +33,7 @@ const Home = () => {
             date: post.created_at?.slice(0, 10),
             title: post.title,
           }));
+
           setHomePosts(recentPosts);
         } else {
           console.error("❌ 게시글 응답 오류:", data.message);
@@ -139,7 +140,7 @@ const Home = () => {
           </div>
 
           {/* ✅ 좌석도 */}
-          <div className="py-6 px-4">
+          <div className="px-4 py-6">
             <div className="w-full max-w-[900px] mx-auto">
               <SeatChartStatus targetPercentage={percent} />
             </div>
