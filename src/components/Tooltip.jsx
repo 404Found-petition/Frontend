@@ -14,6 +14,10 @@ export const Tooltip = ({
   const safeTags = Array.isArray(tags) ? tags : [];
   const safeBills = Array.isArray(bills) ? bills : [];
 
+  // ✅ 여기! 출력해서 구조 확인
+  console.log("Tooltip bills:", safeBills);
+
+
   return (
     <div
       className="absolute z-50 bg-white border border-gray-300 rounded-[16px] p-4 shadow-xl w-[400px] h-[250px] flex items-start"
@@ -31,10 +35,12 @@ export const Tooltip = ({
         </div>
 
         <ul className="mt-3 list-disc list-inside text-[14px] text-gray-700 space-y-1">
-          {safeBills.slice(0, 3).map((bill, idx) => (
-            <li key={idx}>{bill}</li>
-          ))}
+          {safeBills.slice(0, 3).map((bill, idx) => {
+            const text = typeof bill === "string" ? bill : bill?.title;
+            return <li key={idx}>{text}</li>;
+          })}
         </ul>
+
       </div>
 
       {/* 오른쪽 이미지 영역 */}

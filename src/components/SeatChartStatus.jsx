@@ -110,7 +110,7 @@ const SeatChartStatus = ({ targetPercentage, isCompact }) => {
             left: x,
             name: lawmaker?.name || "",
             party: lawmaker?.party || "",
-            bills: lawmaker?.bills.map((b) => b.title) || [],
+            bills: lawmaker?.bills || [],
             tags: [lawmaker?.representative_field] || [],
             imageSrc: lawmaker?.photo || "",
             color: lawmaker?.color || "#d9d9d9",

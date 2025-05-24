@@ -41,20 +41,20 @@ const Home = () => {
       .catch((err) => console.error("❌ 게시글 불러오기 실패:", err));
   }, []);
 
-  // ✅ 청원 동의 현황
+  // ✅ 청원 동의 현황 (csvPrediction 기반 API로 교체됨)
   useEffect(() => {
-    fetch(`${API_BASE_URL}/api/predictions/`)
+    fetch(`${API_BASE_URL}/api/public-predictions/`)
       .then((res) => res.json())
       .then((data) => {
-        console.log("📦 예측 API 응답:", data); // 디버깅용
+        console.log("📦 csvPrediction API 응답:", data); // 디버깅용
         const raw = data.data || [];
         const sorted = raw
           .sort((a, b) => a.id - b.id)
-          .slice(0, 6)
+          .slice(0, 7)
           .map((item) => ({
-            title: item.petition_title,
-            summary: item.petition_content,
-            probability: parseFloat(item.prediction_percentage.toFixed(1)),
+            title: item.title,
+            summary: item.summary,
+            probability: parseFloat(item.probability.toFixed(1)),
           }));
         setPetitionData(sorted);
       })
@@ -156,7 +156,6 @@ const Home = () => {
                   <Wordcloud />
                 </div>
 
-
                 <div className="w-full rounded-[33px] border border-[#a1a1a1] px-10 py-6 relative">
                   <div className="flex items-center justify-between mb-6">
                     <h2 className="text-[35px] font-bold text-[#6b6b6b] tracking-widest">POST</h2>
@@ -187,7 +186,7 @@ const Home = () => {
                 </div>
 
                 {/* ✅ 구분선 추가 위치는 여기입니다! */}
-                  <hr className="border-t border-gray-400 w-[100%] mx-auto mb-6" />
+                <hr className="border-t border-gray-400 w-[100%] mx-auto mb-6" />
 
                 <div className="flex flex-col space-y-4">
                   {petitionData.map((petition, i) => (
@@ -200,7 +199,6 @@ const Home = () => {
                   ))}
                 </div>
               </div>
-
             </div>
           </div>
 
@@ -212,4 +210,5 @@ const Home = () => {
 
 export default Home;
 
-//5.24 3:13 청원 동의 현황 홈화면 카드 api 수정 중 -> 3:17 수정됨 이거 API 맞아
+// 5.24 3:13 청원 동의 현황 홈화면 카드 api 수정 중 -> 3:17 수정됨
+// 5.25 ✅ csvPrediction 기반 /api/public-predictions/로 전환 완료
