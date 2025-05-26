@@ -7,7 +7,7 @@ const GoogleLoginButton = ({ setLoginFailed }) => {
     console.log("🟢 받은 Google 토큰:", token);
 
     try {
-      const res = await fetch("http://localhost:8000/api/social-login/google/", {
+      const res = await fetch("https://lawgic.p-e.kr/api/social-login/google/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token }),
