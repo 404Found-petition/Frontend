@@ -93,8 +93,8 @@ const Home = () => {
   }, []);
 
   let percent = 0;
-  if (prediction && typeof prediction.predicted_percentage === "number") {
-    percent = Math.round(prediction.predicted_percentage);
+  if (prediction && typeof prediction.prediction_percentage === "number") {
+    percent = Math.round(prediction.prediction_percentage); // ✅ 올바른 키
   }
 
   return (
