@@ -173,7 +173,7 @@ const PostDetail = () => {
             {/* 본문 영역: 제목 + 스크롤 가능 영역 */}
             <div className="flex-1 pr-2 overflow-hidden">
               <h1 className="mb-4 text-3xl font-bold">{post.title}</h1>
-              <div className="pr-1 overflow-y-auto" style={{ maxHeight: "370px" }}> {/* ✅ VoteBox 위 15px까지 여유 */}
+              <div className="pr-1 overflow-y-auto" style={{ maxHeight: "450px" }}> {/* ✅ VoteBox 위 15px까지 여유 */}
                 <p className="text-lg text-gray-700 break-words whitespace-pre-line">
                   {post.content}
                 </p>

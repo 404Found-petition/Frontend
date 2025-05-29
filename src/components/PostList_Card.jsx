@@ -1,6 +1,6 @@
 import React from "react";
 
-const PostListCard = ({ title, content, authorId, date, onClick }) => {
+const PostListCard = ({ title, content, authorId, date, voteEnabled, onClick }) => {
   return (
     <div
       onClick={onClick}
@@ -10,7 +10,11 @@ const PostListCard = ({ title, content, authorId, date, onClick }) => {
       <div className="flex items-center gap-2 mb-2">
         <div className="w-[47px] h-[47px] bg-[#93e1b3] border border-black rounded-full" />
         <div className="text-[12.4px] text-black">{authorId || "익명"}</div>
-        <div className="ml-auto text-[10.6px] text-[#6b6b6b]">{date || "날짜 없음"}</div>
+        <div className="ml-auto text-[10.6px] text-[#6b6b6b] flex items-center gap-1">
+          {date || "날짜 없음"}
+          {voteEnabled && <span className="ml-1 text-green-700 text-[13px]">✅</span>}
+        </div>
+
       </div>
 
       {/* 제목 */}

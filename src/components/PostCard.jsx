@@ -49,10 +49,12 @@ const PostCard = ({ post, onCommentSubmit, onVote }) => {
             {post.userid}
           </span>
         </div>
-        <span className="text-sm text-gray-500 whitespace-nowrap">
-          {post.created_at?.slice(0, 10) || "작성일 없음"}
-        </span>
+        <div className="flex items-center gap-1 text-sm text-gray-500">
+          <span>{post.created_at?.slice(0, 10) || "작성일 없음"}</span>
+          {post.has_vote && <span className="text-green-700 text-[13px]">✅</span>}
+        </div>
       </div>
+
 
       {/* 제목 + 본문 미리보기 */}
       <div className="mt-1 px-[2px] overflow-hidden">
