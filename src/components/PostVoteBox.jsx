@@ -14,8 +14,9 @@ const PostVoteBox = ({
 }) => {
   const isLoggedIn = !!localStorage.getItem("access");
   const total = voteResult.yes + voteResult.no;
-  const yesPercent = total ? (voteResult.yes / total) * 100 : 50;
+  const yesPercent = total ? Math.round((voteResult.yes / total) * 100) : 50;
   const noPercent = 100 - yesPercent;
+
 
   return (
     <div className="mt-4">
@@ -42,7 +43,7 @@ const PostVoteBox = ({
           {/* 가운데 막대 */}
           <motion.div
             animate={{ left: `${yesPercent}%` }}
-            transition={{ duration: 1.2 }}
+            transition={{ duration: 1.2 }}s
             className="absolute top-0 bottom-0 w-[2px] bg-black z-10"
           />
 
