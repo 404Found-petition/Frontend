@@ -65,8 +65,8 @@ const PostDetail = () => {
           setComments(res.data.comments);
           const vote = res.data.vote_result || { yes: 0, no: 0 };
           setVoteResult(vote);
-          setVoted(res.data.has_voted); // ✅ 핵심!
-          setSelectedOption(vote.yes > vote.no ? "yes" : "no");
+          setVoted(res.data.has_voted); // 핵심!
+          setSelectedOption(res.data.vote_option); //  정확한 선택 값 저장
         }
       } catch (err) {
         console.error("❌ 게시글 상세 불러오기 실패:", err);
