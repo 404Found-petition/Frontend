@@ -1,6 +1,3 @@
-// PostVoteBox.jsx
-// 게시글 투표 기능을 재사용 가능한 컴포넌트로 분리
-
 import React from "react";
 import { motion } from "framer-motion";
 
@@ -16,7 +13,6 @@ const PostVoteBox = ({
   const total = voteResult.yes + voteResult.no;
   const yesPercent = total ? Math.round((voteResult.yes / total) * 100) : 50;
   const noPercent = 100 - yesPercent;
-
 
   return (
     <div className="mt-4">
@@ -40,21 +36,21 @@ const PostVoteBox = ({
         </div>
       ) : (
         <div className="relative w-full h-[64px] border border-green-700 rounded overflow-hidden">
-          {/* 가운데 막대 */}
+          {/* DividerLine: 중앙에서 시작해 YES 위치로 이동 */}
           <motion.div
+            initial={{ left: "50%" }}
             animate={{ left: `${yesPercent}%` }}
-            transition={{ duration: 1.2 }}s
+            transition={{ duration: 1.2 }}
             className="absolute top-0 bottom-0 w-[2px] bg-black z-10"
           />
 
           {/* YES 영역 */}
           <motion.div
+            initial={{ width: "50%" }}
             animate={{ width: `${yesPercent}%` }}
             transition={{ duration: 1.2 }}
-            className={`absolute top-0 left-0 h-full flex flex-col items-center justify-center ${selectedOption === "yes"
-                ? "bg-white text-green-700"
-                : "bg-green-600 text-white"
-              }`}
+            className={`absolute top-0 left-0 h-full flex flex-col items-center justify-center
+              ${selectedOption === "yes" ? "bg-white text-green-700" : "bg-green-600 text-white"}`}
           >
             <span>YES</span>
             <span className="text-lg font-bold">{Math.round(yesPercent)}%</span>
@@ -62,15 +58,11 @@ const PostVoteBox = ({
 
           {/* NO 영역 */}
           <motion.div
+            initial={{ width: "50%" }}
             animate={{ width: `${noPercent}%` }}
-            transition={{
-              duration: 1.2,
-              ease: [0.25, 0.1, 0.25, 1], // cubic-bezier for 자연스러운 ease
-            }}
-            className={`absolute top-0 right-0 h-full flex flex-col items-center justify-center ${selectedOption === "no"
-                ? "bg-white text-green-700"
-                : "bg-green-600 text-white"
-              }`}
+            transition={{ duration: 1.2 }}
+            className={`absolute top-0 right-0 h-full flex flex-col items-center justify-center
+              ${selectedOption === "no" ? "bg-white text-green-700" : "bg-green-600 text-white"}`}
             style={{
               display: noPercent < 5 ? "none" : "flex",
             }}
@@ -85,7 +77,3 @@ const PostVoteBox = ({
 };
 
 export default PostVoteBox;
-
-
-
-// 5.15 1:59 PostList에 있던 투표 기능 따로 빼고 이거 다 import 해서 PostList, PostDetail에서 쓸거임
