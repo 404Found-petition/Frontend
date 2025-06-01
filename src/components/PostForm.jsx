@@ -89,7 +89,7 @@ const PostForm = ({ showVote, setShowVote }) => {
         {/* 내용 입력 + 투표 박스 */}
         <div className="flex flex-col justify-between flex-grow w-full p-4 mb-4 overflow-hidden bg-white border border-gray-300 rounded-md">
           <textarea
-            className="w-full h-[180px] resize-none outline-none overflow-y-auto"
+            className="w-full h-[300px] resize-none outline-none overflow-y-auto"
             placeholder="내용 작성"
             value={content}
             onChange={(e) => setContent(e.target.value)}
