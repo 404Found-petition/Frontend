@@ -51,7 +51,6 @@ const PostForm = ({ showVote, setShowVote }) => {
       }
       alert("게시글 등록 중 오류가 발생했습니다.");
     }
-
   };
 
   // 🔹 작성 취소 시 목록으로 돌아가기
@@ -60,7 +59,7 @@ const PostForm = ({ showVote, setShowVote }) => {
   };
 
   return (
-    <div className="relative w-[1007px] min-h-[750px] top-[40px] left-[217px] shadow-xl">
+    <div className="relative w-[1007px] min-h-[750px] mt-[40px] ml-[217px] shadow-xl">
       {/* 상단 ▶ POST 표시 */}
       <div className="text-[#6C6C6C] text-sm font-semibold flex items-center mb-2 ml-1">
         <span className="mr-1">▶</span>
@@ -68,7 +67,7 @@ const PostForm = ({ showVote, setShowVote }) => {
       </div>
 
       {/* 글쓰기 폼 영역 */}
-      <div className="relative w-full h-full bg-[#f6fff4] p-6 rounded-[10px] border border-[#a3a3a3] flex flex-col justify-between">
+      <div className="relative w-full bg-[#f6fff4] p-6 rounded-[10px] border border-[#a3a3a3] flex flex-col">
         {/* 제목 입력 + 투표 추가 버튼 */}
         <div className="flex items-center justify-between mb-4">
           <input
@@ -87,7 +86,8 @@ const PostForm = ({ showVote, setShowVote }) => {
         </div>
 
         {/* 내용 입력 + 투표 박스 */}
-        <div className="flex flex-col justify-between flex-grow w-full p-4 mb-4 bg-white border border-gray-300 rounded-md">
+        <div className="flex flex-col flex-grow w-full gap-4 p-4 mb-4 bg-white border border-gray-300 rounded-md">
+          {/* 🔧 h-full 제거 → 내용에 맞춰 자동 높이 */}
           <textarea
             className="w-full h-[300px] resize-none outline-none overflow-y-auto"
             placeholder="내용 작성"
@@ -97,7 +97,7 @@ const PostForm = ({ showVote, setShowVote }) => {
 
           {/* 투표 UI 노출 조건 */}
           {showVote && (
-            <div className="mt-4">
+            <div>
               <VoteBox />
             </div>
           )}
