@@ -5,10 +5,15 @@ const PostCreate = () => {
   const [showVote, setShowVote] = useState(false);
 
   return (
-    <div className="flex justify-center w-full bg-white">
-      {/* 수정됨: relative, min-h-screen 제거 → 그림자 오버플로우 방지 */}
-      <div className="w-[1440px] flex justify-center">
-        {/* 상단 정렬 + 상태 전달 */}
+    <div className="flex flex-col items-center w-full bg-white py-10">
+      {/* POST 제목 라벨 */}
+      <div className="text-[#6C6C6C] text-sm font-semibold flex items-center mb-2">
+        <span className="mr-1">▶</span>
+        <span>POST</span>
+      </div>
+
+      {/* 글쓰기 폼 영역 */}
+      <div className="w-[1007px]">
         <PostForm showVote={showVote} setShowVote={setShowVote} />
       </div>
     </div>
@@ -16,7 +21,3 @@ const PostCreate = () => {
 };
 
 export default PostCreate;
-
-
-
-//5.21 10:15 투표 버튼으로만 투표 생성/삭제 할 수 있게
