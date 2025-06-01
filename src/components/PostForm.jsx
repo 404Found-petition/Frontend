@@ -11,7 +11,7 @@ const PostForm = ({ showVote, setShowVote }) => {
   const [content, setContent] = useState("");
   const [showAlert, setShowAlert] = useState(false);
 
-  // ✅ 글 작성 처리 함수
+  // 글 작성 처리 함수
   const handleSubmit = async () => {
     if (!title.trim() || !content.trim()) {
       setShowAlert(true); // 제목/내용 없으면 경고창
@@ -19,13 +19,13 @@ const PostForm = ({ showVote, setShowVote }) => {
     }
 
     try {
-      // 🔹 서버에 글 저장 요청 (axios POST)
+      // 서버에 글 저장 요청 (axios POST)
       const res = await api.post(
         `${API_BASE_URL}/api/posts/create/`,
         {
           title: title,
           content: content,
-          has_poll: showVote, // 백엔드에서 받는 필드 이름에 맞춰야 함!
+          has_poll: showVote, // 백엔드에서 받는 필드 이름에 맞춰야 함
         },
         {
           headers: {
@@ -37,7 +37,7 @@ const PostForm = ({ showVote, setShowVote }) => {
       if (res.data.success) {
         alert("게시글이 성공적으로 등록되었습니다!");
 
-        // 🔸 목록 페이지로 이동하고 새로고침하여 최신 글 표시
+        // 목록 페이지로 이동하고 새로고침하여 최신 글 표시
         navigate("/posts");
         window.location.reload();
       } else {
@@ -53,13 +53,14 @@ const PostForm = ({ showVote, setShowVote }) => {
     }
   };
 
-  // 🔹 작성 취소 시 목록으로 돌아가기
+  // 작성 취소 시 목록으로 돌아가기
   const handleCancel = () => {
     navigate("/posts");
   };
 
   return (
-    <div className="relative w-[1007px] min-h-[750px] mt-[40px] ml-[217px] shadow-xl">
+    // 수정됨: min-h 제거, bg/rounded/border/overflow 추가로 그림자와 여백 문제 해결
+    <div className="relative w-[1007px] mt-[40px] ml-[217px] bg-white rounded-[10px] border border-[#a3a3a3] shadow-xl overflow-hidden">
       {/* 상단 ▶ POST 표시 */}
       <div className="text-[#6C6C6C] text-sm font-semibold flex items-center mb-2 ml-1">
         <span className="mr-1">▶</span>
@@ -67,7 +68,8 @@ const PostForm = ({ showVote, setShowVote }) => {
       </div>
 
       {/* 글쓰기 폼 영역 */}
-      <div className="relative w-full bg-[#f6fff4] p-6 rounded-[10px] border border-[#a3a3a3] flex flex-col">
+      {/* 수정됨: h-full, border, rounded 제거해서 내부 공간 오버플로우 제거 */}
+      <div className="w-full bg-[#f6fff4] p-6 flex flex-col">
         {/* 제목 입력 + 투표 추가 버튼 */}
         <div className="flex items-center justify-between mb-4">
           <input
@@ -87,7 +89,7 @@ const PostForm = ({ showVote, setShowVote }) => {
 
         {/* 내용 입력 + 투표 박스 */}
         <div className="flex flex-col flex-grow w-full gap-4 p-4 mb-4 bg-white border border-gray-300 rounded-md">
-          {/* 🔧 h-full 제거 → 내용에 맞춰 자동 높이 */}
+          {/* 수정됨: h-full 제거 → 내용에 맞춰 자동 높이 */}
           <textarea
             className="w-full h-[300px] resize-none outline-none overflow-y-auto"
             placeholder="내용 작성"
