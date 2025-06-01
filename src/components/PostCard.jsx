@@ -51,7 +51,7 @@ const PostCard = ({ post, onCommentSubmit, onVote }) => {
         </div>
         <div className="flex items-center gap-1 text-sm text-gray-500">
           <span>{post.created_at?.slice(0, 10) || "작성일 없음"}</span>
-          {post.has_vote && <span className="text-green-700 text-[13px]">✅</span>}
+          {post.has_poll && <span className="text-green-700 text-[13px]">✅</span>}
         </div>
       </div>
 
