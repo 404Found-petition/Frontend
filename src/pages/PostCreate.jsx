@@ -5,15 +5,9 @@ const PostCreate = () => {
   const [showVote, setShowVote] = useState(false);
 
   return (
-    <div className="flex flex-col items-center w-full bg-white py-10">
-      {/* POST 제목 라벨 */}
-      <div className="text-[#6C6C6C] text-sm font-semibold flex items-center mb-2">
-        <span className="mr-1">▶</span>
-        <span>POST</span>
-      </div>
-
-      {/* 글쓰기 폼 영역 */}
-      <div className="w-[1007px]">
+    <div className="flex justify-center w-full bg-white">
+      <div className="w-[1440px] min-h-screen relative mt-0 overflow-hidden">
+        {/* 상단 정렬 + 상태 전달 */}
         <PostForm showVote={showVote} setShowVote={setShowVote} />
       </div>
     </div>
