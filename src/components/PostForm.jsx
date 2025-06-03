@@ -19,9 +19,9 @@ const PostForm = ({ showVote, setShowVote }) => {
     }
 
     try {
-      // 🔹 서버에 글 저장 요청 (axios POST)
+      // 서버에 글 저장 요청 (axios POST)
       const res = await api.post(
-        ${API_BASE_URL}/api/posts/create/,
+        `${API_BASE_URL}/api/posts/create/`,
         {
           title: title,
           content: content,
@@ -29,7 +29,7 @@ const PostForm = ({ showVote, setShowVote }) => {
         },
         {
           headers: {
-            Authorization: Bearer ${localStorage.getItem("access")},
+            Authorization: `Bearer ${localStorage.getItem("access")}`,
           },
         }
       );
@@ -37,7 +37,7 @@ const PostForm = ({ showVote, setShowVote }) => {
       if (res.data.success) {
         alert("게시글이 성공적으로 등록되었습니다!");
 
-        // 🔸 목록 페이지로 이동하고 새로고침하여 최신 글 표시
+        // 목록 페이지로 이동하고 새로고침하여 최신 글 표시
         navigate("/posts");
         window.location.reload();
       } else {
@@ -54,7 +54,7 @@ const PostForm = ({ showVote, setShowVote }) => {
 
   };
 
-  // 🔹 작성 취소 시 목록으로 돌아가기
+  // 작성 취소 시 목록으로 돌아가기
   const handleCancel = () => {
     navigate("/posts");
   };
